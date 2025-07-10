@@ -1,6 +1,6 @@
 title: GlowDoc
 description: modern docs for the modern world
-theme: default
+theme: purple
 navigation:
 - title: Introduction
   id: introduction
