@@ -151,7 +151,7 @@ _Ready to transform your documentation? Let's build something beautiful together
 
 <br/>
 
-⚡️ More projects can be found at my [website](https://paradise-runner.github.io/glowdoc/) 🌊 and the project is fully open source on [github](https://github.com/paradise-runner/glowdoc) 🤩
+⚡️ More projects can be found at my [website](https://hec.works) 🌊 and the project is fully open source on [github](https://github.com/paradise-runner/glowdoc) 🤩
 
 <br/>
 <br/>
