@@ -1,0 +1,66 @@
+title: GlowDoc
+description: modern docs for the modern world
+theme: default
+navigation:
+- title: Introduction
+  id: introduction
+  items:
+  - title: What is GlowDoc?
+    id: what-is-glowdoc
+    file: introduction/what-is-glowdoc.md
+    items: []
+  - title: Quick Start
+    id: quick-start
+    file: introduction/quick-start.md
+    items: []
+- title: Getting Started
+  id: getting-started
+  items:
+  - title: First Steps
+    id: first-steps
+    file: getting-started/first-steps.md
+    items: []
+  - title: Setup
+    id: setup
+    file: null
+    items:
+    - title: Installation
+      id: setup-installation
+      file: getting-started/setup/installation.md
+      items: []
+    - title: Configuration
+      id: setup-configuration
+      file: getting-started/setup/configuration.md
+      items: []
+- title: Customization
+  id: customization
+  items:
+  - title: Theming
+    id: theming
+    file: customization/theming.md
+    items: []
+  - title: Components
+    id: components
+    file: customization/components.md
+    items: []
+  - title: Custom Styling
+    id: styling
+    file: customization/styling.md
+    items: []
+- title: Advanced
+  id: advanced
+  items:
+  - title: API Reference
+    id: api
+    file: advanced/api.md
+    items: []
+  - title: Deployment
+    id: deployment
+    file: advanced/deployment.md
+    items: []
+  - title: Plugins and Extensions
+    id: plugins
+    file: advanced/plugins.md
+    items: []
+social:
+  github: paradise-runner

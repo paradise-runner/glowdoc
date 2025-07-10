@@ -1,0 +1,6 @@
+- [x] - add a search bar on the top of the sidebar that allows the user to search through all sections and pages
+- [x] - have each page be reflected in the url address so each page has its own url
+- [x] - center the rendered docs in the page
+- [x] - test image loading/rendering to ensure a user can add an image
+- [x] - add themes set in the config.yaml with different colorways
+- [x] - add optional social media handles for Instagram/Github/Mastodon/Threads in the init that will be displayed with their respective logos to the right of the light/dark toggle when generated

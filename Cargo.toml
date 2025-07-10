@@ -1,0 +1,16 @@
+[package]
+name = "glowdoc"
+version = "1.0.0"
+edition = "2021"
+description = "Modern Documentation Generator"
+license = "MIT"
+authors = ["GlowDoc Team"]
+
+[[bin]]
+name = "glowdoc"
+path = "src/main.rs"
+
+[dependencies]
+serde = { version = "1.0", features = ["derive"] }
+serde_yaml = "0.9"
+pulldown-cmark = "0.9"
