@@ -4,3 +4,4 @@
 - [x] - test image loading/rendering to ensure a user can add an image
 - [x] - add themes set in the config.yaml with different colorways
 - [x] - add optional social media handles for Instagram/Github/Mastodon/Threads in the init that will be displayed with their respective logos to the right of the light/dark toggle when generated
+- [ ] - favicon support
