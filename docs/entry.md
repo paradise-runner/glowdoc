@@ -20,24 +20,28 @@ Create stunning documentation sites with modern design principles. GlowDoc is a 
 
 <img src="docs/diagonal_comparison.png" width=100%/>
 
-
 ## Key Features
 
 ### 📝 Markdown-Powered Content
+
 Write your documentation in familiar GitHub-flavored markdown with support for:
+
 - Tables and task lists
 - Code syntax highlighting
 - Footnotes and strikethrough
 - Math equations (coming soon!)
 
 ### 🗂️ Smart Organization
+
 - Automatic navigation generation from folder structure
 - Configurable page ordering and section management
 - Search functionality across all content
 - Breadcrumb navigation for easy orientation
 
 ### 🎯 Zero Configuration Required
+
 Get started instantly with our intelligent config generator:
+
 - Auto-detects your documentation structure
 - Extracts page titles from markdown headers
 - Interactive setup wizard for customization
@@ -46,6 +50,7 @@ Get started instantly with our intelligent config generator:
 ### 😍 Beautiful Theme System
 
 Professional styling that adapts to your needs:
+
 - Modern CSS custom properties for easy customization
 - Automatic light/dark mode with smooth transitions
 - Carefully crafted typography and visual hierarchy
@@ -78,40 +83,50 @@ python3 -m http.server 8000
 ## Perfect For Every Documentation Need
 
 ### 📚 **Project Documentation**
+
 Document your open source projects, internal tools, or enterprise software with professional-grade presentation
 
-### 🔌 **API Documentation** 
+### 🔌 **API Documentation**
+
 Create comprehensive API guides with code examples, endpoint references, and interactive exploration
 
 ### 📖 **User Guides & Tutorials**
+
 Build step-by-step guides that help users master your product with clear, visual instructions
 
 ### 🧠 **Knowledge Bases**
+
 Organize team knowledge, best practices, and institutional wisdom in an easily searchable format
 
 ### ✍️ **Technical Blogs**
+
 Publish technical content with beautiful formatting, syntax highlighting, and professional presentation
 
 ### 📋 **Documentation Hubs**
+
 Centralize multiple projects or teams' documentation in one cohesive, branded experience
 
 ## What Makes GlowDoc Special?
 
 ### 🏗️ **Single Binary Simplicity**
+
 No complex build pipelines or dependency management - just one Rust binary that does everything you need.
 
 ### 🎨 **Design That Delights**
+
 We obsess over the details so you don't have to. Every element is carefully designed for optimal readability and user experience.
 
 ### 🚀 **Performance Obsessed**
+
 Your documentation loads instantly and stays responsive, even with hundreds of pages of content.
 
 ### 🔍 **Search-First Experience**
+
 Built-in search helps users find exactly what they're looking for, when they need it.
 
 ## Our Philosophy
 
-> **Great documentation should be invisible technology.** 
+> **Great documentation should be invisible technology.**
 
 We believe that the best documentation tools get out of your way and let your content shine. GlowDoc follows these core principles:
 
@@ -132,7 +147,12 @@ We believe that the best documentation tools get out of your way and let your co
 
 ---
 
-*Ready to transform your documentation? Let's build something beautiful together!* 🌟
+_Ready to transform your documentation? Let's build something beautiful together!_ 🌟
 
+<br/>
+
+⚡️ More projects can be found at my [website](https://paradise-runner.github.io/glowdoc/) 🌊 and the project is fully open source on [github](https://github.com/paradise-runner/glowdoc) 🤩
+
+<br/>
 <br/>
 <center>Built with ♥️ in Fort Collins, CO</center>
