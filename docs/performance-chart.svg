@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="800" height="400" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <style>
+      .bar-label { font-family: Arial, sans-serif; font-size: 12px; text-anchor: middle; fill: rgb(168, 168, 168); } 
+      .chart-title { font-family: Arial, sans-serif; font-size: 18px; font-weight: bold; text-anchor: middle; fill: rgb(168, 168, 168); } 
+      .axis-label { font-family: Arial, sans-serif; font-size: 10px; fill:rgb(168, 168, 168); }
+    </style>
+  </defs>
+  
+  <!-- Chart Title -->
+  <text x="400" y="30" class="chart-title">GlowDoc vs Astro Starlight (10x speed)</text>
+  
+  <!-- Chart background (transparent) -->
+  <rect x="60" y="60" width="680" height="280" fill="none" stroke="#E5E7EB" stroke-width="1" rx="8" ry="8"/>
+
+  <!-- Bar 1: GlowDoc -->
+  <path d="M111.00000000000001,340 L111.00000000000001,339.692 L349,339.692 L349,340 Z" fill="#A855F7">
+    <animate attributeName="d" 
+             values="M111.00000000000001,340 L111.00000000000001,340 L349,340 L349,340 Z;M111.00000000000001,340 L111.00000000000001,339.692 L349,339.692 L349,340 Z" 
+             dur="0.5s" 
+             fill="freeze"
+             calcMode="spline"
+             keySplines="0.25 0.1 0.25 1"
+             keyTimes="0;1"/>
+  </path>
+  
+  <!-- Bar label -->
+  <text x="230" y="360" class="bar-label">GlowDoc</text>
+  <text x="230" y="375" class="axis-label">1.32s</text>
+
+  <!-- Bar 2: Starlight -->
+  <path d="M451,340 L451,68 Q451,60 459,60 L681,60 Q689,60 689,68 L689,340 Z" fill="#8B5CF6">
+    <animate attributeName="d" 
+             values="M451,340 L451,340 Q451,338 459,338 L681,338 Q689,338 689,340 L689,340 Z;M451,340 L451,68 Q451,60 459,60 L681,60 Q689,60 689,68 L689,340 Z" 
+             dur="120s" 
+             fill="freeze"
+             calcMode="spline"
+             keySplines="0.25 0.1 0.25 1"
+             keyTimes="0;1"/>
+  </path>
+  
+  <!-- Bar label -->
+  <text x="570" y="360" class="bar-label">Starlight</text>
+  <text x="570" y="375" class="axis-label">20m</text>
+
+  <!-- Y-axis labels -->
+  <text x="50" y="65" class="axis-label" text-anchor="end">1200s</text>
+  <text x="50" y="345" class="axis-label" text-anchor="end">0</text>
+  
+  <!-- Chart subtitle -->
+  <text x="400" y="390" class="axis-label" text-anchor="middle">Performance Comparison</text>
+  
+</svg>

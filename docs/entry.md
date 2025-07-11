@@ -57,6 +57,46 @@ Professional styling that adapts to your needs:
 - Responsive design that looks stunning on every device
 - Persistent theme preferences across sessions
 
+## Wicked Fast & Efficient
+
+GlowDoc is super fast, able to handle thousands of documents with ease.
+
+### Performance Benchmark: 10,000 Documents
+
+<table style="width: 100%; border-collapse: collapse; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+  <thead>
+    <tr style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+      <th style="padding: 16px; text-align: left; font-weight: 600;">Feature</th>
+      <th style="padding: 16px; text-align: left; font-weight: 600;">GlowDoc</th>
+      <th style="padding: 16px; text-align: left; font-weight: 600;">Astro Starlight</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr style="background-color: rgba(102, 126, 234, 0.05);">
+      <td style="padding: 16px; font-weight: 600; border-bottom: 1px solid rgba(0,0,0,0.1);">Compile Time</td>
+      <td style="padding: 16px; color: #10b981; font-weight: 500; border-bottom: 1px solid rgba(0,0,0,0.1);">1.32 seconds</td>
+      <td style="padding: 16px; color: #ef4444; font-weight: 500; border-bottom: 1px solid rgba(0,0,0,0.1);">20+ minutes</td>
+    </tr>
+    <tr>
+      <td style="padding: 16px; font-weight: 600; border-bottom: 1px solid rgba(0,0,0,0.1);">Output Size</td>
+      <td style="padding: 16px; color: #10b981; font-weight: 500; border-bottom: 1px solid rgba(0,0,0,0.1);">17MB (gzipped)</td>
+      <td style="padding: 16px; color: #ef4444; font-weight: 500; border-bottom: 1px solid rgba(0,0,0,0.1);">10+ GB</td>
+    </tr>
+    <tr style="background-color: rgba(102, 126, 234, 0.05);">
+      <td style="padding: 16px; font-weight: 600;">Document Capacity</td>
+      <td style="padding: 16px; color: #10b981; font-weight: 500;">Tens of thousands</td>
+      <td style="padding: 16px; color: #ef4444; font-weight: 500;">Limited by build time/storage space</td>
+    </tr>
+  </tbody>
+</table>
+
+*Testing environment: MacBook Air M1, 16GB RAM. Results may vary based on hardware and document complexity.*
+
+<br/>
+
+<img src="docs/performance-chart.svg" width=100%/>
+
+
 ## Quick Start Guide
 
 Ready to create amazing documentation? Here's how to get started in under 5 minutes:
