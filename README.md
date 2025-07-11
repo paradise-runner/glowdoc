@@ -4,6 +4,8 @@ GlowDoc is a modern, lightweight documentation template that presents a beautifu
 
 <img src="docs/diagonal_comparison.png" width=100%/>
 
+We have a hosted version of _these very docs_ on [github pages](https://paradise-runner.github.io/glowdoc/) for you to see how markdown can be transformed _very quickly_ and _beautifully_.
+
 ## Features
 
 - ✨ **Modern Design** - Clean, professional appearance with beautiful typography
