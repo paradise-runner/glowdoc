@@ -142,4 +142,4 @@ GlowDoc works with any static hosting service:
 
 ## License
 
-MIT License - feel free to use this template for your projects!
+Apache 2.0 License - feel free to use this template for your projects!
