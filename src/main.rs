@@ -134,7 +134,7 @@ impl GlowDocBuilder {
                 let is_first = navigation.first().map(|s| s.id == section.id).unwrap_or(false) && index == 0 && item.file.is_some();
                 let active_class = if is_first { " active" } else { "" };
                 
-                self.generate_nav_item(&mut sidebar_html, item, 0, active_class);
+                self.generate_nav_item(&mut sidebar_html, item, section, 0, active_class);
             }
             
             sidebar_html.push_str("\n                    </ul>\n                </div>");
@@ -145,24 +145,30 @@ impl GlowDocBuilder {
         sidebar_html
     }
 
-    fn generate_nav_item(&self, html: &mut String, item: &NavigationItem, depth: usize, active_class: &str) {
+    fn generate_nav_item(&self, html: &mut String, item: &NavigationItem, section: &NavigationSection, depth: usize, active_class: &str) {
+        self.generate_nav_item_with_path(html, item, section, depth, active_class, &section.id)
+    }
+
+    fn generate_nav_item_with_path(&self, html: &mut String, item: &NavigationItem, section: &NavigationSection, depth: usize, active_class: &str, path_prefix: &str) {
         let indent = "    ".repeat(depth + 6); // Base indentation + depth
         
         if item.file.is_some() {
-            // This is a page item
+            // This is a page item - use combined path for URL and content ID
+            let combined_id = format!("{}/{}", path_prefix, item.id);
             html.push_str(&format!(
-                "\n{}<li class=\"nav-item\">\n{}    <a href=\"#{}\" class=\"nav-link{}\" data-content-id=\"{}\">{}</a>\n{}</li>",
-                indent, indent, item.id, active_class, item.id, item.title, indent
+                "\n{}<li class=\"nav-item\">\n{}    <a href=\"#{}\" class=\"nav-link{}\" data-content-id=\"{}\" data-section-id=\"{}\">{}</a>\n{}</li>",
+                indent, indent, combined_id, active_class, combined_id, section.id, item.title, indent
             ));
         } else if !item.items.is_empty() {
             // This is a nested folder
+            let folder_path = format!("{}/{}", path_prefix, item.id);
             html.push_str(&format!(
                 "\n{}<li class=\"nav-item nav-folder\">\n{}    <div class=\"nav-folder-title\" onclick=\"toggleNestedSection('{}')\">\n{}        <span>{}</span>\n{}        <svg class=\"nav-folder-toggle\" width=\"10\" height=\"10\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\">\n{}            <polyline points=\"6 9 12 15 18 9\"></polyline>\n{}        </svg>\n{}    </div>\n{}    <ul class=\"nav-nested-items\" id=\"{}-items\">",
-                indent, indent, item.id, indent, item.title, indent, indent, indent, indent, indent, item.id
+                indent, indent, folder_path.replace("/", "-"), indent, item.title, indent, indent, indent, indent, indent, folder_path.replace("/", "-")
             ));
             
             for nested_item in &item.items {
-                self.generate_nav_item(html, nested_item, depth + 1, "");
+                self.generate_nav_item_with_path(html, nested_item, section, depth + 1, "", &folder_path);
             }
             
             html.push_str(&format!("\n{}    </ul>\n{}</li>", indent, indent));
@@ -196,8 +202,13 @@ impl GlowDocBuilder {
     }
 
     fn process_content_item(&self, item: &NavigationItem, section: &NavigationSection, content_html: &mut String, search_index: &mut String, active_class: &str) -> Result<(), Box<dyn std::error::Error>> {
+        self.process_content_item_with_path(item, section, content_html, search_index, active_class, &section.id)
+    }
+
+    fn process_content_item_with_path(&self, item: &NavigationItem, section: &NavigationSection, content_html: &mut String, search_index: &mut String, active_class: &str, path_prefix: &str) -> Result<(), Box<dyn std::error::Error>> {
         if let Some(file) = &item.file {
-            // This is a page item
+            // This is a page item - use combined path for content ID
+            let combined_id = format!("{}/{}", path_prefix, item.id);
             let full_path = Path::new(&self.docs_path).join(file);
             match fs::read_to_string(full_path) {
                 Ok(raw_content) => {
@@ -212,7 +223,7 @@ impl GlowDocBuilder {
                     
                     content_html.push_str(&format!(
                         "\n            <section class=\"content-section{}\" id=\"{}\">\n                {}\n            </section>",
-                        active_class, item.id, processed_content
+                        active_class, combined_id, processed_content
                     ));
                     
                     // Add to search index - escape quotes and newlines
@@ -224,7 +235,7 @@ impl GlowDocBuilder {
                     
                     search_index.push_str(&format!(
                         "    \"{}\": {{\n        \"title\": \"{}\",\n        \"section\": \"{}\",\n        \"content\": \"{}\"\n    }},\n",
-                        item.id, 
+                        combined_id, 
                         item.title.replace("\"", "\\\""), 
                         section.title.replace("\"", "\\\""), 
                         escaped_content
@@ -232,15 +243,16 @@ impl GlowDocBuilder {
                 }
                 Err(e) => {
                     eprintln!("Error loading raw markdown file {}: {}", file, e);
+                    let combined_id = format!("{}/{}", path_prefix, item.id);
                     content_html.push_str(&format!(
                         "\n            <section class=\"content-section{}\" id=\"{}\">\n                <p>Error loading content: {}</p>\n            </section>",
-                        active_class, item.id, file
+                        active_class, combined_id, file
                     ));
                     
                     // Add minimal entry to search index
                     search_index.push_str(&format!(
                         "    \"{}\": {{\n        \"title\": \"{}\",\n        \"section\": \"{}\",\n        \"content\": \"Error loading content\"\n    }},\n",
-                        item.id, 
+                        combined_id, 
                         item.title.replace("\"", "\\\""), 
                         section.title.replace("\"", "\\\"")
                     ));
@@ -248,9 +260,10 @@ impl GlowDocBuilder {
             }
         }
         
-        // Process nested items
+        // Process nested items with extended path
         for nested_item in &item.items {
-            self.process_content_item(nested_item, section, content_html, search_index, "")?;
+            let nested_path = format!("{}/{}", path_prefix, item.id);
+            self.process_content_item_with_path(nested_item, section, content_html, search_index, "", &nested_path)?;
         }
         
         Ok(())
@@ -1088,7 +1101,7 @@ impl GlowDocBuilder {
         }
 
         function showContent(contentId, updateUrl = true) {
-            console.log('showContent called with:', contentId);
+            console.log('showContent called with contentId:', contentId);
             
             // Switch to docs view first
             showDocs();
@@ -1100,7 +1113,7 @@ impl GlowDocBuilder {
                 section.classList.remove('active');
             });
             
-            // Show selected content
+            // Show selected content using the combined ID
             const targetContent = document.getElementById(contentId);
             console.log('Target content element:', targetContent);
             if (targetContent) {
@@ -1124,7 +1137,7 @@ impl GlowDocBuilder {
                 link.classList.remove('active');
             });
             
-            // Find and activate the correct nav link
+            // Find and activate the correct nav link using the combined content ID
             const navLinks = document.querySelectorAll('.nav-link');
             for (const link of navLinks) {
                 if (link.getAttribute('data-content-id') === contentId) {
@@ -1239,7 +1252,7 @@ impl GlowDocBuilder {
             document.getElementById('search-results').style.display = 'none';
             document.getElementById('navigation-container').style.display = 'block';
             
-            // Show the content (URL will be updated)
+            // Show the content directly using the combined ID
             showContent(contentId);
         }
 
@@ -1260,15 +1273,19 @@ impl GlowDocBuilder {
         function loadFromUrl() {
             const hash = window.location.hash.substring(1); // Remove the # symbol
             
-            if (hash && document.getElementById(hash)) {
-                // Show the content without updating URL (it's already correct)
-                showContent(hash, false);
-            } else {
-                // Check if we're on homepage by checking if there's no hash and no docs content
-                if (!hash) {
-                    // Show homepage and update URL
-                    history.replaceState({ page: 'homepage' }, '', window.location.pathname);
+            if (hash) {
+                // Check if the content exists with the provided hash
+                if (document.getElementById(hash)) {
+                    // Show the content without updating URL (it's already correct)
+                    showContent(hash, false);
+                    return;
                 }
+            }
+            
+            // Check if we're on homepage by checking if there's no hash and no docs content
+            if (!hash) {
+                // Show homepage and update URL
+                history.replaceState({ page: 'homepage' }, '', window.location.pathname);
             }
         }
 
@@ -1353,11 +1370,10 @@ impl GlowDocBuilder {
 
     fn generate_html(&self, config: &Config, sidebar_html: &str, content_html: &str, homepage_html: &str, search_index: &str) -> String {
         // Get the first page ID for the Docs link
-        let first_page_id = config.navigation
+        let first_page_url = config.navigation
             .first()
-            .and_then(|section| section.items.first())
-            .map(|item| item.id.as_str())
-            .unwrap_or("what-is-glowdoc");
+            .and_then(|section| section.items.first().map(|item| format!("{}/{}", section.id, item.id)))
+            .unwrap_or_else(|| "introduction/what-is-glowdoc".to_string());
         
         // Generate social media links HTML
         let social_links_html = self.generate_social_links_html(&config.social);
@@ -1434,7 +1450,7 @@ impl GlowDocBuilder {
             config.description, 
             self.generate_css(&config.theme),
             config.title,
-            first_page_id,
+            first_page_url,
             social_links_html,
             homepage_html,
             sidebar_html,
