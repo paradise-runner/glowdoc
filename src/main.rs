@@ -270,6 +270,13 @@ impl GlowDocBuilder {
     }
 
     fn load_homepage(&self) -> Result<String, Box<dyn std::error::Error>> {
+        if !Path::new(&self.entry_path).exists() {
+            return Err(format!(
+                "Entry file not found: {}\n\nThe entry.md file is required for the homepage content.\nPlease create this file in your docs/ folder with your homepage markdown content.",
+                self.entry_path
+            ).into());
+        }
+        
         let content = fs::read_to_string(&self.entry_path)?;
         
         // Set up markdown parser with GitHub-flavored markdown
