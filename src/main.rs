@@ -1707,8 +1707,11 @@ impl GlowDocBuilder {
             const hash = window.location.hash.substring(1); // Remove the # symbol
             
             if (hash) {
-                // Check if this is a header link (contains two # symbols)
-                const hashParts = hash.split('#');
+                // Decode URL-encoded hash (handles %23 -> #)
+                const decodedHash = decodeURIComponent(hash);
+                
+                // Check if this is a header link (contains # in the decoded version)
+                const hashParts = decodedHash.split('#');
                 if (hashParts.length === 2) {
                     const [contentId, headerId] = hashParts;
                     if (document.getElementById(contentId)) {
@@ -1717,17 +1720,17 @@ impl GlowDocBuilder {
                     }
                 } else {
                     // Regular content ID
-                    if (document.getElementById(hash)) {
-                        showContent(hash, false);
+                    if (document.getElementById(decodedHash)) {
+                        showContent(decodedHash, false);
                         return;
                     }
                 }
-            }
-            
-            // Check if we're on homepage by checking if there's no hash and no docs content
-            if (!hash) {
-                // Show homepage and update URL
-                history.replaceState({ page: 'homepage' }, '', window.location.pathname);
+                
+                // If hash doesn't match any content, show homepage
+                showHomepage();
+            } else {
+                // No hash - show homepage
+                showHomepage();
             }
         }
 
