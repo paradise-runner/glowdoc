@@ -157,6 +157,15 @@ The development server (`cargo run watch`) provides:
 - Documentation: http://localhost:8000
 - WebSocket (hot reload): ws://localhost:8081
 
+**Debug Mode:**
+```bash
+# Enable verbose logging for development server
+GLOWDOC_DEBUG=1 cargo run watch
+
+# Enable browser console debug logging
+# In browser console: localStorage.setItem('glowdoc-debug', 'true')
+```
+
 ## Customization
 
 ### Colors

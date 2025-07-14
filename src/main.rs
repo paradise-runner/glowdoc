@@ -1326,7 +1326,10 @@ impl GlowDocBuilder {
             const ws = new WebSocket('ws://localhost:8081');
             
             ws.onopen = function() {
-                console.log('🔥 Hot reload connected');
+                // Only log in debug mode or if explicitly enabled
+                if (localStorage.getItem('glowdoc-debug') === 'true') {
+                    console.log('🔥 Hot reload connected');
+                }
             };
             
             ws.onmessage = function(event) {
@@ -1337,12 +1340,18 @@ impl GlowDocBuilder {
             };
             
             ws.onclose = function() {
-                console.log('🔌 Hot reload disconnected, attempting to reconnect...');
+                // Only log reconnection attempts in debug mode
+                if (localStorage.getItem('glowdoc-debug') === 'true') {
+                    console.log('🔌 Hot reload disconnected, attempting to reconnect...');
+                }
                 setTimeout(initHotReload, 1000);
             };
             
             ws.onerror = function(error) {
-                console.log('🚫 Hot reload error:', error);
+                // Only log errors in debug mode
+                if (localStorage.getItem('glowdoc-debug') === 'true') {
+                    console.log('🚫 Hot reload error:', error);
+                }
             };
         }
         
@@ -1975,11 +1984,35 @@ impl GlowDocBuilder {
     }
 
     fn build(&self) -> Result<(), Box<dyn std::error::Error>> {
-        self.build_with_hot_reload(false)
+        println!("Building GlowDoc...");
+        
+        let mut config = self.load_config()?;
+        
+        // Extract headers from markdown files and update navigation
+        self.extract_headers_and_update_navigation(&mut config.navigation)?;
+        
+        // Generate homepage, sidebar and content
+        let homepage_html = self.load_homepage()?;
+        let sidebar_html = self.generate_sidebar(&config.navigation);
+        let (content_html, search_index) = self.generate_content(&config.navigation)?;
+        
+        // Generate complete HTML
+        let html_content = self.generate_html(&config, &sidebar_html, &content_html, &homepage_html, &search_index, false);
+        
+        // Write the HTML file
+        fs::write(&self.output_path, html_content)?;
+        
+        println!("Build completed successfully!");
+        println!("Generated files:");
+        println!("- {}", self.output_path);
+        
+        Ok(())
     }
     
     fn build_with_hot_reload(&self, enable_hot_reload: bool) -> Result<(), Box<dyn std::error::Error>> {
-        println!("Building GlowDoc...");
+        if std::env::var("GLOWDOC_DEBUG").is_ok() {
+            println!("Building GlowDoc...");
+        }
         
         let mut config = self.load_config()?;
         
@@ -1997,9 +2030,11 @@ impl GlowDocBuilder {
         // Write the HTML file
         fs::write(&self.output_path, html_content)?;
         
-        println!("Build completed successfully!");
-        println!("Generated files:");
-        println!("- {}", self.output_path);
+        if std::env::var("GLOWDOC_DEBUG").is_ok() {
+            println!("Build completed successfully!");
+            println!("Generated files:");
+            println!("- {}", self.output_path);
+        }
         
         Ok(())
     }
@@ -2030,7 +2065,9 @@ impl GlowDocBuilder {
         // Start WebSocket server for hot reload
         let ws_server = {
             let listener = TcpListener::bind("127.0.0.1:8081").await?;
-            println!("🔥 WebSocket server starting on ws://localhost:8081");
+            if std::env::var("GLOWDOC_DEBUG").is_ok() {
+                println!("🔥 WebSocket server starting on ws://localhost:8081");
+            }
             
             tokio::spawn(async move {
                 while let Ok((stream, addr)) = listener.accept().await {
@@ -2079,7 +2116,9 @@ impl GlowDocBuilder {
                             continue;
                         }
                         
-                        println!("📁 File change detected: {:?}", event);
+                        if std::env::var("GLOWDOC_DEBUG").is_ok() {
+                            println!("📁 File change detected: {:?}", event);
+                        }
                         
                         // Check if we should rebuild based on debouncing
                         let now = Instant::now();
@@ -2097,19 +2136,30 @@ impl GlowDocBuilder {
                                 last_rebuild_times.insert(path.clone(), now);
                             }
                             
+                            // Show a simple rebuild message for normal use
+                            let file_name = file_paths.first()
+                                .and_then(|p| std::path::Path::new(p).file_name())
+                                .and_then(|name| name.to_str())
+                                .unwrap_or("files");
+                            println!("🔄 Rebuilding after {} change...", file_name);
+                            
                             // Rebuild the site
                             if let Err(e) = builder.build_with_hot_reload(true) {
                                 eprintln!("❌ Build failed: {}", e);
                             } else {
-                                println!("✅ Site rebuilt successfully");
+                                println!("✅ Ready");
                                 
                                 // Send reload signal to all connected clients
                                 if let Err(e) = reload_tx_clone.send("reload".to_string()) {
-                                    eprintln!("Error sending reload signal: {}", e);
+                                    if std::env::var("GLOWDOC_DEBUG").is_ok() {
+                                        eprintln!("Error sending reload signal: {}", e);
+                                    }
                                 }
                             }
                         } else {
-                            println!("⏭️  Skipping rebuild (debounced)");
+                            if std::env::var("GLOWDOC_DEBUG").is_ok() {
+                                println!("⏭️  Skipping rebuild (debounced)");
+                            }
                         }
                     }
                     Err(e) => {
@@ -2309,12 +2359,17 @@ impl GlowDocBuilder {
             }
         };
         
-        println!("🔌 WebSocket client connected: {}", addr);
+        // Debug level logging for connections
+        if std::env::var("GLOWDOC_DEBUG").is_ok() {
+            println!("🔌 WebSocket client connected: {}", addr);
+        }
         let (mut ws_sender, mut ws_receiver) = ws_stream.split();
         
         // Send initial connection confirmation
         if let Err(e) = ws_sender.send(Message::Text("connected".to_string())).await {
-            eprintln!("❌ Failed to send initial message: {}", e);
+            if std::env::var("GLOWDOC_DEBUG").is_ok() {
+                eprintln!("❌ Failed to send initial message: {}", e);
+            }
             return;
         }
         
@@ -2326,15 +2381,21 @@ impl GlowDocBuilder {
                     match reload_msg {
                         Ok(msg) => {
                             if let Err(e) = ws_sender.send(Message::Text(msg)).await {
-                                eprintln!("❌ Failed to send reload message to {}: {}", addr, e);
+                                if std::env::var("GLOWDOC_DEBUG").is_ok() {
+                                    eprintln!("❌ Failed to send reload message to {}: {}", addr, e);
+                                }
                                 break;
                             }
                         }
                         Err(broadcast::error::RecvError::Lagged(_)) => {
-                            eprintln!("⚠️  Client {} lagged behind, reconnection recommended", addr);
+                            if std::env::var("GLOWDOC_DEBUG").is_ok() {
+                                eprintln!("⚠️  Client {} lagged behind, reconnection recommended", addr);
+                            }
                         }
                         Err(broadcast::error::RecvError::Closed) => {
-                            println!("📡 Reload channel closed, disconnecting {}", addr);
+                            if std::env::var("GLOWDOC_DEBUG").is_ok() {
+                                println!("📡 Reload channel closed, disconnecting {}", addr);
+                            }
                             break;
                         }
                     }
@@ -2344,15 +2405,21 @@ impl GlowDocBuilder {
                 ws_msg = ws_receiver.next() => {
                     match ws_msg {
                         Some(Ok(Message::Close(_))) => {
-                            println!("🔌 Client {} disconnected", addr);
+                            if std::env::var("GLOWDOC_DEBUG").is_ok() {
+                                println!("🔌 Client {} disconnected", addr);
+                            }
                             break;
                         }
                         Some(Err(e)) => {
-                            eprintln!("❌ WebSocket error from {}: {}", addr, e);
+                            if std::env::var("GLOWDOC_DEBUG").is_ok() {
+                                eprintln!("❌ WebSocket error from {}: {}", addr, e);
+                            }
                             break;
                         }
                         None => {
-                            println!("🔌 Client {} connection closed", addr);
+                            if std::env::var("GLOWDOC_DEBUG").is_ok() {
+                                println!("🔌 Client {} connection closed", addr);
+                            }
                             break;
                         }
                         _ => {} // Ignore other message types
@@ -2361,7 +2428,9 @@ impl GlowDocBuilder {
             }
         }
         
-        println!("🔌 WebSocket client {} disconnected", addr);
+        if std::env::var("GLOWDOC_DEBUG").is_ok() {
+            println!("🔌 WebSocket client {} disconnected", addr);
+        }
     }
 }
 
@@ -2396,14 +2465,19 @@ async fn main() {
         }
         
         // Build the site once with hot reload enabled
+        println!("🔨 Building initial site...");
         if let Err(e) = builder.build_with_hot_reload(true) {
             eprintln!("❌ Initial build failed: {}", e);
             std::process::exit(1);
         }
+        println!("✅ Initial build complete");
         
         println!("🚀 Development server starting...");
         println!("📖 Open http://localhost:8000 to view your documentation");
         println!("🔥 Hot reload enabled - changes will automatically refresh the browser");
+        if std::env::var("GLOWDOC_DEBUG").is_ok() {
+            println!("🐛 Debug mode enabled - verbose logging active");
+        }
         println!("⏹️  Press Ctrl+C to stop the server");
         
         // Start the development server (HTTP + WebSocket + File Watcher)

@@ -5523,7 +5523,10 @@ const searchIndex = {
             const ws = new WebSocket('ws://localhost:8081');
             
             ws.onopen = function() {
-                console.log('🔥 Hot reload connected');
+                // Only log in debug mode or if explicitly enabled
+                if (localStorage.getItem('glowdoc-debug') === 'true') {
+                    console.log('🔥 Hot reload connected');
+                }
             };
             
             ws.onmessage = function(event) {
@@ -5534,12 +5537,18 @@ const searchIndex = {
             };
             
             ws.onclose = function() {
-                console.log('🔌 Hot reload disconnected, attempting to reconnect...');
+                // Only log reconnection attempts in debug mode
+                if (localStorage.getItem('glowdoc-debug') === 'true') {
+                    console.log('🔌 Hot reload disconnected, attempting to reconnect...');
+                }
                 setTimeout(initHotReload, 1000);
             };
             
             ws.onerror = function(error) {
-                console.log('🚫 Hot reload error:', error);
+                // Only log errors in debug mode
+                if (localStorage.getItem('glowdoc-debug') === 'true') {
+                    console.log('🚫 Hot reload error:', error);
+                }
             };
         }
         
