@@ -841,7 +841,7 @@
 
     <div class="homepage active" id="homepage">
         <div class="homepage-content">
-<h1>Welcome to GlowDoc! ✨</h1>
+<h1>✨ ~~ Welcome to GlowDoc! ~~ ✨</h1>
 <p>Create stunning documentation sites with modern design principles. GlowDoc is a powerful, yet simple static site generator built with Rust that transforms your markdown files into beautiful, responsive documentation websites.</p>
 <h2>Why Choose GlowDoc?</h2>
 <p><strong>✨ Beautiful by Default</strong> - Clean, professional design with carefully crafted typography, spacing, and visual hierarchy that makes your content shine</p>
@@ -859,7 +859,6 @@
 <li>Tables and task lists</li>
 <li>Code syntax highlighting</li>
 <li>Footnotes and strikethrough</li>
-<li>Math equations (coming soon!)</li>
 </ul>
 <h3>🗂️ Smart Organization</h3>
 <ul>
@@ -5457,6 +5456,39 @@ const searchIndex = {
     }
 };
 
+
+        // Hot reload functionality
+        function initHotReload() {
+            const ws = new WebSocket('ws://localhost:8081');
+            
+            ws.onopen = function() {
+                console.log('🔥 Hot reload connected');
+            };
+            
+            ws.onmessage = function(event) {
+                if (event.data === 'reload') {
+                    console.log('🔄 Reloading page...');
+                    window.location.reload();
+                }
+            };
+            
+            ws.onclose = function() {
+                console.log('🔌 Hot reload disconnected, attempting to reconnect...');
+                setTimeout(initHotReload, 1000);
+            };
+            
+            ws.onerror = function(error) {
+                console.log('🚫 Hot reload error:', error);
+            };
+        }
+        
+        // Initialize hot reload when page loads
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initHotReload);
+        } else {
+            initHotReload();
+        }
+        
         function toggleTheme() {
             const html = document.documentElement;
             const currentTheme = html.getAttribute('data-theme');
@@ -5800,7 +5832,7 @@ const searchIndex = {
             
             // Display results
             if (results.length === 0) {
-                searchResultsList.innerHTML = '<div class=\"no-results\">No results found</div>';
+                searchResultsList.innerHTML = '<div class="no-results">No results found</div>';
             } else {
                 let resultsHtml = '';
                 results.forEach(result => {

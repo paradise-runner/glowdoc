@@ -4,6 +4,19 @@ use std::env;
 use std::time::{SystemTime, UNIX_EPOCH};
 use serde::{Deserialize, Serialize};
 use pulldown_cmark::{Parser, Options, html, Event, Tag, HeadingLevel};
+use tokio::net::{TcpListener, TcpStream};
+use tokio_tungstenite::{accept_async, tungstenite::Message};
+use futures_util::{SinkExt, StreamExt};
+use notify::{Watcher, RecursiveMode, recommended_watcher};
+use std::sync::mpsc;
+use std::thread;
+use tokio::sync::broadcast;
+use std::collections::HashMap;
+use std::time::{Duration, Instant};
+use hyper::{Body, Request, Response, Server};
+use hyper::service::{make_service_fn, service_fn};
+use std::convert::Infallible;
+use std::net::SocketAddr;
 
 mod config_builder;
 use config_builder::ConfigBuilder;
@@ -1303,8 +1316,47 @@ impl GlowDocBuilder {
         }}", theme_vars)
     }
 
-    fn generate_javascript(&self) -> &'static str {
-        r#"        function toggleTheme() {
+    fn generate_javascript(&self, enable_hot_reload: bool) -> String {
+        let mut js = String::new();
+        
+        if enable_hot_reload {
+            js.push_str(r#"
+        // Hot reload functionality
+        function initHotReload() {
+            const ws = new WebSocket('ws://localhost:8081');
+            
+            ws.onopen = function() {
+                console.log('🔥 Hot reload connected');
+            };
+            
+            ws.onmessage = function(event) {
+                if (event.data === 'reload') {
+                    console.log('🔄 Reloading page...');
+                    window.location.reload();
+                }
+            };
+            
+            ws.onclose = function() {
+                console.log('🔌 Hot reload disconnected, attempting to reconnect...');
+                setTimeout(initHotReload, 1000);
+            };
+            
+            ws.onerror = function(error) {
+                console.log('🚫 Hot reload error:', error);
+            };
+        }
+        
+        // Initialize hot reload when page loads
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initHotReload);
+        } else {
+            initHotReload();
+        }
+        "#);
+        }
+        
+        js.push_str(r#"
+        function toggleTheme() {
             const html = document.documentElement;
             const currentTheme = html.getAttribute('data-theme');
             const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
@@ -1647,7 +1699,7 @@ impl GlowDocBuilder {
             
             // Display results
             if (results.length === 0) {
-                searchResultsList.innerHTML = '<div class=\"no-results\">No results found</div>';
+                searchResultsList.innerHTML = '<div class="no-results">No results found</div>';
             } else {
                 let resultsHtml = '';
                 results.forEach(result => {
@@ -1761,7 +1813,9 @@ impl GlowDocBuilder {
                 !mobileToggle.contains(event.target)) {
                 sidebar.classList.remove('visible');
             }
-        });"#
+        });"#);
+        
+        js
     }
 
     fn generate_social_links_html(&self, social: &SocialLinks) -> String {
@@ -1814,7 +1868,7 @@ impl GlowDocBuilder {
         social_html
     }
 
-    fn generate_html(&self, config: &Config, sidebar_html: &str, content_html: &str, homepage_html: &str, search_index: &str) -> String {
+    fn generate_html(&self, config: &Config, sidebar_html: &str, content_html: &str, homepage_html: &str, search_index: &str, enable_hot_reload: bool) -> String {
         // Get the first page ID for the Docs link
         let first_page_url = config.navigation
             .first()
@@ -1916,11 +1970,15 @@ impl GlowDocBuilder {
             current_year,
             config.title,
             search_index,
-            self.generate_javascript()
+            self.generate_javascript(enable_hot_reload)
         )
     }
 
     fn build(&self) -> Result<(), Box<dyn std::error::Error>> {
+        self.build_with_hot_reload(false)
+    }
+    
+    fn build_with_hot_reload(&self, enable_hot_reload: bool) -> Result<(), Box<dyn std::error::Error>> {
         println!("Building GlowDoc...");
         
         let mut config = self.load_config()?;
@@ -1934,7 +1992,7 @@ impl GlowDocBuilder {
         let (content_html, search_index) = self.generate_content(&config.navigation)?;
         
         // Generate complete HTML
-        let html_content = self.generate_html(&config, &sidebar_html, &content_html, &homepage_html, &search_index);
+        let html_content = self.generate_html(&config, &sidebar_html, &content_html, &homepage_html, &search_index, enable_hot_reload);
         
         // Write the HTML file
         fs::write(&self.output_path, html_content)?;
@@ -1945,9 +2003,370 @@ impl GlowDocBuilder {
         
         Ok(())
     }
+    
+    async fn start_development_server(&self) -> Result<(), Box<dyn std::error::Error>> {
+        println!("🔥 Starting development server...");
+        
+        let (reload_tx, _) = broadcast::channel(16);
+        let reload_tx_clone = reload_tx.clone();
+        
+        // Start HTTP server for serving the documentation
+        let http_server = {
+            let make_svc = make_service_fn(|_conn| async {
+                Ok::<_, Infallible>(service_fn(Self::handle_http_request))
+            });
+            
+            let addr = SocketAddr::from(([127, 0, 0, 1], 8000));
+            println!("📖 HTTP server starting on http://localhost:8000");
+            
+            let server = Server::bind(&addr).serve(make_svc);
+            tokio::spawn(async move {
+                if let Err(e) = server.await {
+                    eprintln!("❌ HTTP server error: {}", e);
+                }
+            })
+        };
+        
+        // Start WebSocket server for hot reload
+        let ws_server = {
+            let listener = TcpListener::bind("127.0.0.1:8081").await?;
+            println!("🔥 WebSocket server starting on ws://localhost:8081");
+            
+            tokio::spawn(async move {
+                while let Ok((stream, addr)) = listener.accept().await {
+                    let reload_rx = reload_tx.subscribe();
+                    tokio::spawn(Self::handle_websocket(stream, addr, reload_rx));
+                }
+            })
+        };
+        
+        // Start file watcher in a separate thread
+        let docs_path = self.docs_path.clone();
+        let builder = GlowDocBuilder::new();
+        thread::spawn(move || {
+            let (tx, rx) = mpsc::channel();
+            
+            let mut watcher = recommended_watcher(move |res| {
+                match res {
+                    Ok(event) => {
+                        if let Err(e) = tx.send(event) {
+                            eprintln!("Error sending file event: {}", e);
+                        }
+                    }
+                    Err(e) => eprintln!("Watch error: {:?}", e),
+                }
+            }).expect("Failed to create file watcher");
+            
+            watcher.watch(Path::new(&docs_path), RecursiveMode::Recursive)
+                .expect("Failed to watch docs directory");
+            
+            println!("👀 Watching for changes in {}/", docs_path);
+            
+            // Debouncing mechanism to prevent duplicate rebuilds
+            let mut last_rebuild_times: HashMap<String, Instant> = HashMap::new();
+            let debounce_duration = Duration::from_millis(200); // 200ms debounce
+            
+            loop {
+                match rx.recv() {
+                    Ok(event) => {
+                        // Extract file paths from the event
+                        let file_paths: Vec<String> = event.paths
+                            .iter()
+                            .filter_map(|p| p.to_str().map(|s| s.to_string()))
+                            .collect();
+                        
+                        if file_paths.is_empty() {
+                            continue;
+                        }
+                        
+                        println!("📁 File change detected: {:?}", event);
+                        
+                        // Check if we should rebuild based on debouncing
+                        let now = Instant::now();
+                        let should_rebuild = file_paths.iter().any(|path| {
+                            if let Some(&last_time) = last_rebuild_times.get(path) {
+                                now.duration_since(last_time) > debounce_duration
+                            } else {
+                                true // First time seeing this file
+                            }
+                        });
+                        
+                        if should_rebuild {
+                            // Update the last rebuild time for all affected files
+                            for path in &file_paths {
+                                last_rebuild_times.insert(path.clone(), now);
+                            }
+                            
+                            // Rebuild the site
+                            if let Err(e) = builder.build_with_hot_reload(true) {
+                                eprintln!("❌ Build failed: {}", e);
+                            } else {
+                                println!("✅ Site rebuilt successfully");
+                                
+                                // Send reload signal to all connected clients
+                                if let Err(e) = reload_tx_clone.send("reload".to_string()) {
+                                    eprintln!("Error sending reload signal: {}", e);
+                                }
+                            }
+                        } else {
+                            println!("⏭️  Skipping rebuild (debounced)");
+                        }
+                    }
+                    Err(e) => {
+                        eprintln!("File watcher error: {}", e);
+                        break;
+                    }
+                }
+            }
+        });
+        
+        // Wait for servers to complete (they run indefinitely)
+        let _ = tokio::join!(http_server, ws_server);
+        
+        Ok(())
+    }
+    
+    async fn handle_http_request(req: Request<Body>) -> Result<Response<Body>, Infallible> {
+        let path = req.uri().path();
+        
+        // Handle static assets from docs directory
+        if path.starts_with("/docs/") || path.contains('.') {
+            return Self::serve_static_file(path).await;
+        }
+        
+        // Serve index.html for all other requests (SPA behavior)
+        match fs::read_to_string("index.html") {
+            Ok(content) => {
+                Ok(Response::builder()
+                    .header("content-type", "text/html; charset=utf-8")
+                    .header("cache-control", "no-cache, no-store, must-revalidate")
+                    .header("pragma", "no-cache")
+                    .header("expires", "0")
+                    .body(Body::from(content))
+                    .unwrap())
+            }
+            Err(_) => {
+                let error_html = r#"
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title>GlowDoc - File Not Found</title>
+                    <style>
+                        body { font-family: Arial, sans-serif; margin: 50px; text-align: center; }
+                        .error { color: #e74c3c; }
+                        .suggestion { color: #2c3e50; margin-top: 20px; }
+                    </style>
+                </head>
+                <body>
+                    <h1 class="error">📄 Documentation not found</h1>
+                    <p>The index.html file hasn't been generated yet.</p>
+                    <div class="suggestion">
+                        <p>Make sure you have:</p>
+                        <ul style="text-align: left; display: inline-block;">
+                            <li>Created a <code>docs/config.yaml</code> file</li>
+                            <li>Added some markdown files to the <code>docs/</code> directory</li>
+                            <li>Run the build process</li>
+                        </ul>
+                        <p>Try running: <code>cargo run init-config</code> first</p>
+                    </div>
+                </body>
+                </html>
+                "#;
+                
+                Ok(Response::builder()
+                    .status(404)
+                    .header("content-type", "text/html; charset=utf-8")
+                    .body(Body::from(error_html))
+                    .unwrap())
+            }
+        }
+    }
+    
+    async fn serve_static_file(path: &str) -> Result<Response<Body>, Infallible> {
+        // Clean up the path and resolve to file system
+        let clean_path = path.trim_start_matches('/');
+        let file_path = if clean_path.starts_with("docs/") {
+            // Direct reference to docs folder
+            clean_path.to_string()
+        } else {
+            // Assume it's a relative reference from within the docs
+            format!("docs/{}", clean_path)
+        };
+        
+        // Try to read the file
+        match fs::read(&file_path) {
+            Ok(content) => {
+                let content_type = Self::get_content_type(&file_path);
+                
+                Ok(Response::builder()
+                    .header("content-type", content_type)
+                    .header("cache-control", "no-cache, no-store, must-revalidate")
+                    .header("pragma", "no-cache")
+                    .header("expires", "0")
+                    .body(Body::from(content))
+                    .unwrap())
+            }
+            Err(_) => {
+                let not_found_html = format!(r#"
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title>File Not Found</title>
+                    <style>
+                        body {{ font-family: Arial, sans-serif; margin: 50px; text-align: center; }}
+                        .error {{ color: #e74c3c; }}
+                    </style>
+                </head>
+                <body>
+                    <h1 class="error">📄 File not found</h1>
+                    <p>The requested file <code>{}</code> could not be found.</p>
+                    <p><a href="/">← Back to documentation</a></p>
+                </body>
+                </html>
+                "#, file_path);
+                
+                Ok(Response::builder()
+                    .status(404)
+                    .header("content-type", "text/html; charset=utf-8")
+                    .body(Body::from(not_found_html))
+                    .unwrap())
+            }
+        }
+    }
+    
+    fn get_content_type(file_path: &str) -> &'static str {
+        let extension = file_path
+            .split('.')
+            .last()
+            .unwrap_or("")
+            .to_lowercase();
+        
+        match extension.as_str() {
+            // Images
+            "jpg" | "jpeg" => "image/jpeg",
+            "png" => "image/png",
+            "gif" => "image/gif",
+            "svg" => "image/svg+xml",
+            "webp" => "image/webp",
+            "ico" => "image/x-icon",
+            "bmp" => "image/bmp",
+            "tiff" | "tif" => "image/tiff",
+            
+            // Text and markup
+            "html" | "htm" => "text/html; charset=utf-8",
+            "css" => "text/css; charset=utf-8",
+            "js" | "mjs" => "application/javascript; charset=utf-8",
+            "json" => "application/json; charset=utf-8",
+            "xml" => "application/xml; charset=utf-8",
+            "txt" => "text/plain; charset=utf-8",
+            "md" => "text/markdown; charset=utf-8",
+            "yaml" | "yml" => "text/yaml; charset=utf-8",
+            
+            // Documents
+            "pdf" => "application/pdf",
+            "doc" => "application/msword",
+            "docx" => "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+            
+            // Audio
+            "mp3" => "audio/mpeg",
+            "wav" => "audio/wav",
+            "ogg" => "audio/ogg",
+            "m4a" => "audio/mp4",
+            
+            // Video
+            "mp4" => "video/mp4",
+            "webm" => "video/webm",
+            "mov" => "video/quicktime",
+            "avi" => "video/x-msvideo",
+            
+            // Archives
+            "zip" => "application/zip",
+            "tar" => "application/x-tar",
+            "gz" => "application/gzip",
+            
+            // Fonts
+            "woff" => "font/woff",
+            "woff2" => "font/woff2",
+            "ttf" => "font/ttf",
+            "otf" => "font/otf",
+            "eot" => "application/vnd.ms-fontobject",
+            
+            // Default
+            _ => "application/octet-stream",
+        }
+    }
+    
+    async fn handle_websocket(
+        stream: TcpStream,
+        addr: std::net::SocketAddr,
+        mut reload_rx: broadcast::Receiver<String>,
+    ) {
+        let ws_stream = match accept_async(stream).await {
+            Ok(ws) => ws,
+            Err(e) => {
+                eprintln!("❌ WebSocket connection error from {}: {}", addr, e);
+                return;
+            }
+        };
+        
+        println!("🔌 WebSocket client connected: {}", addr);
+        let (mut ws_sender, mut ws_receiver) = ws_stream.split();
+        
+        // Send initial connection confirmation
+        if let Err(e) = ws_sender.send(Message::Text("connected".to_string())).await {
+            eprintln!("❌ Failed to send initial message: {}", e);
+            return;
+        }
+        
+        // Handle incoming messages and reload signals
+        loop {
+            tokio::select! {
+                // Handle reload broadcasts
+                reload_msg = reload_rx.recv() => {
+                    match reload_msg {
+                        Ok(msg) => {
+                            if let Err(e) = ws_sender.send(Message::Text(msg)).await {
+                                eprintln!("❌ Failed to send reload message to {}: {}", addr, e);
+                                break;
+                            }
+                        }
+                        Err(broadcast::error::RecvError::Lagged(_)) => {
+                            eprintln!("⚠️  Client {} lagged behind, reconnection recommended", addr);
+                        }
+                        Err(broadcast::error::RecvError::Closed) => {
+                            println!("📡 Reload channel closed, disconnecting {}", addr);
+                            break;
+                        }
+                    }
+                }
+                
+                // Handle incoming WebSocket messages
+                ws_msg = ws_receiver.next() => {
+                    match ws_msg {
+                        Some(Ok(Message::Close(_))) => {
+                            println!("🔌 Client {} disconnected", addr);
+                            break;
+                        }
+                        Some(Err(e)) => {
+                            eprintln!("❌ WebSocket error from {}: {}", addr, e);
+                            break;
+                        }
+                        None => {
+                            println!("🔌 Client {} connection closed", addr);
+                            break;
+                        }
+                        _ => {} // Ignore other message types
+                    }
+                }
+            }
+        }
+        
+        println!("🔌 WebSocket client {} disconnected", addr);
+    }
 }
 
-fn main() {
+#[tokio::main]
+async fn main() {
     let args: Vec<String> = env::args().collect();
     
     // Check for config generation command
@@ -1958,6 +2377,41 @@ fn main() {
             eprintln!("Config generation failed: {}", e);
             std::process::exit(1);
         }
+        return;
+    }
+    
+    // Check for watch command
+    if args.len() > 1 && args[1] == "watch" {
+        let builder = GlowDocBuilder::new();
+        
+        // Check if config.yaml exists
+        if !Path::new(&builder.config_path).exists() {
+            eprintln!("❌ Configuration file not found: {}", builder.config_path);
+            eprintln!("");
+            eprintln!("To get started, run:");
+            eprintln!("  cargo run init-config");
+            eprintln!("");
+            eprintln!("This will create a config.yaml file with your documentation structure.");
+            std::process::exit(1);
+        }
+        
+        // Build the site once with hot reload enabled
+        if let Err(e) = builder.build_with_hot_reload(true) {
+            eprintln!("❌ Initial build failed: {}", e);
+            std::process::exit(1);
+        }
+        
+        println!("🚀 Development server starting...");
+        println!("📖 Open http://localhost:8000 to view your documentation");
+        println!("🔥 Hot reload enabled - changes will automatically refresh the browser");
+        println!("⏹️  Press Ctrl+C to stop the server");
+        
+        // Start the development server (HTTP + WebSocket + File Watcher)
+        if let Err(e) = builder.start_development_server().await {
+            eprintln!("❌ Hot reload server failed: {}", e);
+            std::process::exit(1);
+        }
+        
         return;
     }
     
