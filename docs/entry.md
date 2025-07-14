@@ -1,4 +1,4 @@
-# ✨ ~~ Welcome to GlowDoc! ~~ ✨
+# ✨ Welcome to GlowDoc! ✨
 
 Create stunning documentation sites with modern design principles. GlowDoc is a powerful, yet simple static site generator built with Rust that transforms your markdown files into beautiful, responsive documentation websites.
 

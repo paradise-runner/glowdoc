@@ -841,7 +841,7 @@
 
     <div class="homepage active" id="homepage">
         <div class="homepage-content">
-<h1>✨ ~~ Welcome to GlowDoc! ~~ ✨</h1>
+<h1>✨ Welcome to GlowDoc! ✨</h1>
 <p>Create stunning documentation sites with modern design principles. GlowDoc is a powerful, yet simple static site generator built with Rust that transforms your markdown files into beautiful, responsive documentation websites.</p>
 <h2>Why Choose GlowDoc?</h2>
 <p><strong>✨ Beautiful by Default</strong> - Clean, professional design with carefully crafted typography, spacing, and visual hierarchy that makes your content shine</p>
@@ -1815,22 +1815,52 @@ Your content here...
 
 More content...
 </code></pre>
-<h2 id="4-build-your-site">4. Build Your Site</h2>
-<p>Generate the documentation site:</p>
-<pre><code class="language-bash"># Build the complete site
-cargo run --release
+<h2 id="4-start-development-server">4. Start Development Server</h2>
+<p>For the best development experience, use the built-in development server with hot reload:</p>
+<pre><code class="language-bash"># Start development server (recommended)
+cargo run watch
 </code></pre>
-<p>This creates <code>index.html</code> with your entire documentation site embedded as a single file.</p>
-<h2 id="5-preview-your-site">5. Preview Your Site</h2>
-<p>Start a local server to preview your documentation:</p>
-<pre><code class="language-bash"># Serve the site locally
-python3 -m http.server 8000
+<p>This will:</p>
+<ul>
+<li>Build your documentation site</li>
+<li>Start HTTP server at http://localhost:8000</li>
+<li>Watch for file changes in <code>docs/</code></li>
+<li>Automatically rebuild and refresh your browser when files change</li>
+<li>Serve images and static assets from your docs folder</li>
+</ul>
+<p><strong>Alternative: One-time Build</strong></p>
+<p>If you prefer to build once and serve with a separate server:</p>
+<pre><code class="language-bash"># Build the complete site once
+cargo run --release
 
-# Or use any other static server
-# npx serve .
-# php -S localhost:8000
+# Serve with any static server
+python3 -m http.server 8000
 </code></pre>
 <p>Visit <code>http://localhost:8000</code> to see your documentation site.</p>
+<h2 id="5-add-images-and-assets">5. Add Images and Assets</h2>
+<p>Place images and other static files in your <code>docs/</code> directory:</p>
+<pre><code>docs/
+├── images/
+│   ├── logo.png
+│   └── screenshots/
+│       └── demo.jpg
+├── assets/
+│   └── diagram.svg
+└── getting-started/
+    └── tutorial.md
+</code></pre>
+<p>Reference them in your markdown:</p>
+<pre><code class="language-markdown">![Logo](images/logo.png)
+![Demo Screenshot](images/screenshots/demo.jpg)
+![Architecture](assets/diagram.svg)
+</code></pre>
+<p>The development server (<code>cargo run watch</code>) automatically serves these assets. Supported formats include:</p>
+<ul>
+<li><strong>Images</strong>: PNG, JPG, GIF, SVG, WebP</li>
+<li><strong>Documents</strong>: PDF, TXT, MD</li>
+<li><strong>Media</strong>: MP3, MP4, WebM</li>
+<li><strong>Fonts</strong>: WOFF, TTF, OTF</li>
+</ul>
 <h2 id="6-customize-the-appearance">6. Customize the Appearance</h2>
 <h3 id="update-site-information">Update Site Information</h3>
 <p>Edit <code>docs/config.yaml</code> to customize your site:</p>
@@ -1852,12 +1882,33 @@ theme: vibrant  # or 'default'
         file: introduction/installation.md
 </code></pre>
 <h3 id="rebuild-after-changes">Rebuild After Changes</h3>
-<p>After modifying configuration or content:</p>
+<p><strong>With Development Server (Recommended):</strong></p>
+<ul>
+<li>Changes are automatically detected and applied</li>
+<li>Browser refreshes automatically</li>
+<li>No manual rebuilding needed</li>
+</ul>
+<p><strong>With Manual Builds:</strong></p>
 <pre><code class="language-bash">cargo run --release
 </code></pre>
 <h2 id="7-development-workflow">7. Development Workflow</h2>
-<p>Establish an efficient workflow for ongoing documentation work:</p>
-<h3 id="quick-development-loop">Quick Development Loop</h3>
+<h3 id="hot-reload-development-recommended">Hot Reload Development (Recommended)</h3>
+<p>Use the development server for the fastest workflow:</p>
+<pre><code class="language-bash"># Start development server
+cargo run watch
+
+# Then edit files in docs/ - changes appear instantly!
+</code></pre>
+<p><strong>Features:</strong></p>
+<ul>
+<li><strong>Instant rebuilds</strong> when you save files</li>
+<li><strong>Automatic browser refresh</strong></li>
+<li><strong>Static asset serving</strong> (images, fonts, etc.)</li>
+<li><strong>Error reporting</strong> in console</li>
+<li><strong>Debounced updates</strong> (prevents duplicate builds)</li>
+</ul>
+<h3 id="manual-build-workflow">Manual Build Workflow</h3>
+<p>For production builds or when you prefer manual control:</p>
 <pre><code class="language-bash"># 1. Edit markdown files in docs/
 # 2. Rebuild the site
 cargo run --release
@@ -1866,6 +1917,16 @@ cargo run --release
 # (No need to restart the server)
 </code></pre>
 <h3 id="adding-new-pages">Adding New Pages</h3>
+<p><strong>With Development Server:</strong></p>
+<ol>
+<li>Create the markdown file in the appropriate <code>docs/</code> subfolder</li>
+<li>Run the config generator to update navigation:
+<pre><code class="language-bash">cargo run init-config
+</code></pre>
+</li>
+<li>The site rebuilds automatically - no manual rebuild needed!</li>
+</ol>
+<p><strong>With Manual Builds:</strong></p>
 <ol>
 <li>Create the markdown file in the appropriate <code>docs/</code> subfolder</li>
 <li>Run the config generator to update navigation:
@@ -5412,7 +5473,7 @@ const searchIndex = {
     "getting-started/first-steps": {
         "title": "First Steps",
         "section": "Getting Started",
-        "content": "# First Steps\n\nNow that you have GlowDoc installed, let's build your first documentation site step by step.\n\n## 1. Initialize Your Project\n\nStart by setting up the basic structure for your documentation:\n\n```bash\n# Create a new project directory\nmkdir my-docs\ncd my-docs\n\n# Download or clone GlowDoc\n# Then copy the src/ and docs/ folders to your project\n```\n\n## 2. Generate Your Configuration\n\nUse the interactive config builder to set up your site structure:\n\n```bash\n# Interactive mode - walks you through setup\ncargo run init-config\n```\n\nThis will:\n- Scan any existing markdown files in `docs/`\n- Extract page titles from H1 headers\n- Generate a `docs/config.yaml` file\n- Create a backup of any existing configuration\n\n### Example Interactive Session\n\n```\nGlowDoc Configuration Builder\n============================\n\nSite title [GlowDoc]: My Project Documentation\nDescription [modern docs for the modern world]: Comprehensive guide for My Project\n\nFound 3 sections in docs/:\n  1. introduction (2 files)\n  2. getting-started (3 files)  \n  3. api (1 file)\n\nWould you like to reorder sections? [y/N]: y\nEnter section order (comma-separated): introduction,getting-started,api\n\nConfiguration saved to docs/config.yaml\n```\n\n## 3. Create Your Content\n\n### Homepage Content\n\nCreate or edit `docs/entry.md` for your homepage:\n\n```markdown\n# My Project Documentation\n\nWelcome to the comprehensive documentation for My Project.\n\n## Getting Started\n\nFollow our step-by-step guides to get up and running quickly.\n\n## Key Features\n\n- Feature 1: Description\n- Feature 2: Description\n- Feature 3: Description\n```\n\n### Add Documentation Pages\n\nCreate markdown files in organized folders:\n\n```\ndocs/\n├── entry.md\n├── config.yaml\n├── introduction/\n│   ├── overview.md\n│   └── installation.md\n├── guides/\n│   ├── quick-start.md\n│   ├── configuration.md\n│   └── advanced-usage.md\n└── reference/\n    └── api.md\n```\n\nEach markdown file should start with an H1 header:\n\n```markdown\n# Page Title\n\nYour content here...\n\n## Section\n\nMore content...\n```\n\n## 4. Build Your Site\n\nGenerate the documentation site:\n\n```bash\n# Build the complete site\ncargo run --release\n```\n\nThis creates `index.html` with your entire documentation site embedded as a single file.\n\n## 5. Preview Your Site\n\nStart a local server to preview your documentation:\n\n```bash\n# Serve the site locally\npython3 -m http.server 8000\n\n# Or use any other static server\n# npx serve .\n# php -S localhost:8000\n```\n\nVisit `http://localhost:8000` to see your documentation site.\n\n## 6. Customize the Appearance\n\n### Update Site Information\n\nEdit `docs/config.yaml` to customize your site:\n\n```yaml\ntitle: My Project Documentation\ndescription: Everything you need to know about My Project\ntheme: vibrant  # or 'default'\n```\n\n### Adjust Navigation\n\nReorder sections and pages by editing the navigation structure:\n\n```yaml\nnavigation:\n  - title: Introduction\n    id: introduction\n    items:\n      - title: Overview\n        id: overview\n        file: introduction/overview.md\n      - title: Installation\n        id: installation\n        file: introduction/installation.md\n```\n\n### Rebuild After Changes\n\nAfter modifying configuration or content:\n\n```bash\ncargo run --release\n```\n\n## 7. Development Workflow\n\nEstablish an efficient workflow for ongoing documentation work:\n\n### Quick Development Loop\n\n```bash\n# 1. Edit markdown files in docs/\n# 2. Rebuild the site\ncargo run --release\n\n# 3. Refresh browser to see changes\n# (No need to restart the server)\n```\n\n### Adding New Pages\n\n1. Create the markdown file in the appropriate `docs/` subfolder\n2. Run the config generator to update navigation:\n   ```bash\n   cargo run init-config\n   ```\n3. Rebuild the site:\n   ```bash\n   cargo run --release\n   ```\n\n### Reorganizing Content\n\nUse CLI options for batch updates:\n\n```bash\n# Reorder sections and rename them\ncargo run init-config \\\n  --section-order intro,guide,reference \\\n  --rename-section intro=\"Getting Started\" \\\n  --rename-section guide=\"User Guide\"\n```\n\n## Next Steps\n\nNow that you have a working documentation site:\n\n1. **Explore Customization**: Learn about theming and styling options\n2. **Add More Content**: Expand your documentation with additional pages\n3. **Deploy Your Site**: Set up hosting for your documentation\n4. **Advanced Features**: Explore plugins and advanced configuration\n\n## Common Tasks\n\n### Adding a New Section\n\n1. Create a new folder in `docs/`: `mkdir docs/new-section`\n2. Add markdown files to the folder\n3. Run `cargo run init-config` to detect the new section\n4. Rebuild: `cargo run --release`\n\n### Reordering Pages\n\n```bash\ncargo run init-config --page-order section=page1.md,page2.md,page3.md\n```\n\n### Excluding Draft Content\n\n```bash\ncargo run init-config --exclude-section drafts\n```\n\n### Custom Page Titles\n\nOverride auto-detected titles in `docs/config.yaml`:\n\n```yaml\n- title: Custom Navigation Title\n  id: page-id\n  file: section/actual-filename.md\n```\n\n## Troubleshooting\n\n**Build errors**: Check that all files referenced in `config.yaml` exist and paths are correct.\n\n**Missing navigation**: Ensure your markdown files have H1 headers and are included in the config.\n\n**Styling issues**: Verify the theme setting in config.yaml and rebuild the site.\n\n**Server not accessible**: Check that the server is running and try `http://localhost:8000` instead of `127.0.0.1`."
+        "content": "# First Steps\n\nNow that you have GlowDoc installed, let's build your first documentation site step by step.\n\n## 1. Initialize Your Project\n\nStart by setting up the basic structure for your documentation:\n\n```bash\n# Create a new project directory\nmkdir my-docs\ncd my-docs\n\n# Download or clone GlowDoc\n# Then copy the src/ and docs/ folders to your project\n```\n\n## 2. Generate Your Configuration\n\nUse the interactive config builder to set up your site structure:\n\n```bash\n# Interactive mode - walks you through setup\ncargo run init-config\n```\n\nThis will:\n- Scan any existing markdown files in `docs/`\n- Extract page titles from H1 headers\n- Generate a `docs/config.yaml` file\n- Create a backup of any existing configuration\n\n### Example Interactive Session\n\n```\nGlowDoc Configuration Builder\n============================\n\nSite title [GlowDoc]: My Project Documentation\nDescription [modern docs for the modern world]: Comprehensive guide for My Project\n\nFound 3 sections in docs/:\n  1. introduction (2 files)\n  2. getting-started (3 files)  \n  3. api (1 file)\n\nWould you like to reorder sections? [y/N]: y\nEnter section order (comma-separated): introduction,getting-started,api\n\nConfiguration saved to docs/config.yaml\n```\n\n## 3. Create Your Content\n\n### Homepage Content\n\nCreate or edit `docs/entry.md` for your homepage:\n\n```markdown\n# My Project Documentation\n\nWelcome to the comprehensive documentation for My Project.\n\n## Getting Started\n\nFollow our step-by-step guides to get up and running quickly.\n\n## Key Features\n\n- Feature 1: Description\n- Feature 2: Description\n- Feature 3: Description\n```\n\n### Add Documentation Pages\n\nCreate markdown files in organized folders:\n\n```\ndocs/\n├── entry.md\n├── config.yaml\n├── introduction/\n│   ├── overview.md\n│   └── installation.md\n├── guides/\n│   ├── quick-start.md\n│   ├── configuration.md\n│   └── advanced-usage.md\n└── reference/\n    └── api.md\n```\n\nEach markdown file should start with an H1 header:\n\n```markdown\n# Page Title\n\nYour content here...\n\n## Section\n\nMore content...\n```\n\n## 4. Start Development Server\n\nFor the best development experience, use the built-in development server with hot reload:\n\n```bash\n# Start development server (recommended)\ncargo run watch\n```\n\nThis will:\n- Build your documentation site\n- Start HTTP server at http://localhost:8000\n- Watch for file changes in `docs/`\n- Automatically rebuild and refresh your browser when files change\n- Serve images and static assets from your docs folder\n\n**Alternative: One-time Build**\n\nIf you prefer to build once and serve with a separate server:\n\n```bash\n# Build the complete site once\ncargo run --release\n\n# Serve with any static server\npython3 -m http.server 8000\n```\n\nVisit `http://localhost:8000` to see your documentation site.\n\n## 5. Add Images and Assets\n\nPlace images and other static files in your `docs/` directory:\n\n```\ndocs/\n├── images/\n│   ├── logo.png\n│   └── screenshots/\n│       └── demo.jpg\n├── assets/\n│   └── diagram.svg\n└── getting-started/\n    └── tutorial.md\n```\n\nReference them in your markdown:\n\n```markdown\n![Logo](images/logo.png)\n![Demo Screenshot](images/screenshots/demo.jpg)\n![Architecture](assets/diagram.svg)\n```\n\nThe development server (`cargo run watch`) automatically serves these assets. Supported formats include:\n\n- **Images**: PNG, JPG, GIF, SVG, WebP\n- **Documents**: PDF, TXT, MD\n- **Media**: MP3, MP4, WebM\n- **Fonts**: WOFF, TTF, OTF\n\n## 6. Customize the Appearance\n\n### Update Site Information\n\nEdit `docs/config.yaml` to customize your site:\n\n```yaml\ntitle: My Project Documentation\ndescription: Everything you need to know about My Project\ntheme: vibrant  # or 'default'\n```\n\n### Adjust Navigation\n\nReorder sections and pages by editing the navigation structure:\n\n```yaml\nnavigation:\n  - title: Introduction\n    id: introduction\n    items:\n      - title: Overview\n        id: overview\n        file: introduction/overview.md\n      - title: Installation\n        id: installation\n        file: introduction/installation.md\n```\n\n### Rebuild After Changes\n\n**With Development Server (Recommended):**\n- Changes are automatically detected and applied\n- Browser refreshes automatically\n- No manual rebuilding needed\n\n**With Manual Builds:**\n\n```bash\ncargo run --release\n```\n\n## 7. Development Workflow\n\n### Hot Reload Development (Recommended)\n\nUse the development server for the fastest workflow:\n\n```bash\n# Start development server\ncargo run watch\n\n# Then edit files in docs/ - changes appear instantly!\n```\n\n**Features:**\n- **Instant rebuilds** when you save files\n- **Automatic browser refresh**\n- **Static asset serving** (images, fonts, etc.)\n- **Error reporting** in console\n- **Debounced updates** (prevents duplicate builds)\n\n### Manual Build Workflow\n\nFor production builds or when you prefer manual control:\n\n```bash\n# 1. Edit markdown files in docs/\n# 2. Rebuild the site\ncargo run --release\n\n# 3. Refresh browser to see changes\n# (No need to restart the server)\n```\n\n### Adding New Pages\n\n**With Development Server:**\n1. Create the markdown file in the appropriate `docs/` subfolder\n2. Run the config generator to update navigation:\n   ```bash\n   cargo run init-config\n   ```\n3. The site rebuilds automatically - no manual rebuild needed!\n\n**With Manual Builds:**\n1. Create the markdown file in the appropriate `docs/` subfolder\n2. Run the config generator to update navigation:\n   ```bash\n   cargo run init-config\n   ```\n3. Rebuild the site:\n   ```bash\n   cargo run --release\n   ```\n\n### Reorganizing Content\n\nUse CLI options for batch updates:\n\n```bash\n# Reorder sections and rename them\ncargo run init-config \\\n  --section-order intro,guide,reference \\\n  --rename-section intro=\"Getting Started\" \\\n  --rename-section guide=\"User Guide\"\n```\n\n## Next Steps\n\nNow that you have a working documentation site:\n\n1. **Explore Customization**: Learn about theming and styling options\n2. **Add More Content**: Expand your documentation with additional pages\n3. **Deploy Your Site**: Set up hosting for your documentation\n4. **Advanced Features**: Explore plugins and advanced configuration\n\n## Common Tasks\n\n### Adding a New Section\n\n1. Create a new folder in `docs/`: `mkdir docs/new-section`\n2. Add markdown files to the folder\n3. Run `cargo run init-config` to detect the new section\n4. Rebuild: `cargo run --release`\n\n### Reordering Pages\n\n```bash\ncargo run init-config --page-order section=page1.md,page2.md,page3.md\n```\n\n### Excluding Draft Content\n\n```bash\ncargo run init-config --exclude-section drafts\n```\n\n### Custom Page Titles\n\nOverride auto-detected titles in `docs/config.yaml`:\n\n```yaml\n- title: Custom Navigation Title\n  id: page-id\n  file: section/actual-filename.md\n```\n\n## Troubleshooting\n\n**Build errors**: Check that all files referenced in `config.yaml` exist and paths are correct.\n\n**Missing navigation**: Ensure your markdown files have H1 headers and are included in the config.\n\n**Styling issues**: Verify the theme setting in config.yaml and rebuild the site.\n\n**Server not accessible**: Check that the server is running and try `http://localhost:8000` instead of `127.0.0.1`."
     },
     "getting-started/setup/setup-installation": {
         "title": "Installation",

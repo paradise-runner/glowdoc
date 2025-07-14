@@ -103,31 +103,66 @@ Your content here...
 More content...
 ```
 
-## 4. Build Your Site
+## 4. Start Development Server
 
-Generate the documentation site:
+For the best development experience, use the built-in development server with hot reload:
 
 ```bash
-# Build the complete site
-cargo run --release
+# Start development server (recommended)
+cargo run watch
 ```
 
-This creates `index.html` with your entire documentation site embedded as a single file.
+This will:
+- Build your documentation site
+- Start HTTP server at http://localhost:8000
+- Watch for file changes in `docs/`
+- Automatically rebuild and refresh your browser when files change
+- Serve images and static assets from your docs folder
 
-## 5. Preview Your Site
+**Alternative: One-time Build**
 
-Start a local server to preview your documentation:
+If you prefer to build once and serve with a separate server:
 
 ```bash
-# Serve the site locally
-python3 -m http.server 8000
+# Build the complete site once
+cargo run --release
 
-# Or use any other static server
-# npx serve .
-# php -S localhost:8000
+# Serve with any static server
+python3 -m http.server 8000
 ```
 
 Visit `http://localhost:8000` to see your documentation site.
+
+## 5. Add Images and Assets
+
+Place images and other static files in your `docs/` directory:
+
+```
+docs/
+├── images/
+│   ├── logo.png
+│   └── screenshots/
+│       └── demo.jpg
+├── assets/
+│   └── diagram.svg
+└── getting-started/
+    └── tutorial.md
+```
+
+Reference them in your markdown:
+
+```markdown
+![Logo](images/logo.png)
+![Demo Screenshot](images/screenshots/demo.jpg)
+![Architecture](assets/diagram.svg)
+```
+
+The development server (`cargo run watch`) automatically serves these assets. Supported formats include:
+
+- **Images**: PNG, JPG, GIF, SVG, WebP
+- **Documents**: PDF, TXT, MD
+- **Media**: MP3, MP4, WebM
+- **Fonts**: WOFF, TTF, OTF
 
 ## 6. Customize the Appearance
 
@@ -160,7 +195,12 @@ navigation:
 
 ### Rebuild After Changes
 
-After modifying configuration or content:
+**With Development Server (Recommended):**
+- Changes are automatically detected and applied
+- Browser refreshes automatically
+- No manual rebuilding needed
+
+**With Manual Builds:**
 
 ```bash
 cargo run --release
@@ -168,9 +208,27 @@ cargo run --release
 
 ## 7. Development Workflow
 
-Establish an efficient workflow for ongoing documentation work:
+### Hot Reload Development (Recommended)
 
-### Quick Development Loop
+Use the development server for the fastest workflow:
+
+```bash
+# Start development server
+cargo run watch
+
+# Then edit files in docs/ - changes appear instantly!
+```
+
+**Features:**
+- **Instant rebuilds** when you save files
+- **Automatic browser refresh**
+- **Static asset serving** (images, fonts, etc.)
+- **Error reporting** in console
+- **Debounced updates** (prevents duplicate builds)
+
+### Manual Build Workflow
+
+For production builds or when you prefer manual control:
 
 ```bash
 # 1. Edit markdown files in docs/
@@ -183,6 +241,15 @@ cargo run --release
 
 ### Adding New Pages
 
+**With Development Server:**
+1. Create the markdown file in the appropriate `docs/` subfolder
+2. Run the config generator to update navigation:
+   ```bash
+   cargo run init-config
+   ```
+3. The site rebuilds automatically - no manual rebuild needed!
+
+**With Manual Builds:**
 1. Create the markdown file in the appropriate `docs/` subfolder
 2. Run the config generator to update navigation:
    ```bash
