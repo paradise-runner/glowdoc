@@ -1510,6 +1510,17 @@ fn main() {
     // Default behavior: build the site
     let builder = GlowDocBuilder::new();
     
+    // Check if config.yaml exists
+    if !Path::new(&builder.config_path).exists() {
+        eprintln!("❌ Configuration file not found: {}", builder.config_path);
+        eprintln!("");
+        eprintln!("To get started, run:");
+        eprintln!("  glowdoc init-config");
+        eprintln!("");
+        eprintln!("This will create a config.yaml file with your documentation structure.");
+        std::process::exit(1);
+    }
+    
     if let Err(e) = builder.build() {
         eprintln!("Build failed: {}", e);
         std::process::exit(1);
