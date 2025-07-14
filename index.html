@@ -548,6 +548,119 @@
             background-color: hsl(var(--muted) / 0.2);
         }
 
+        .content-wrapper {
+            display: flex;
+            max-width: 1400px;
+            width: 100%;
+            gap: 2rem;
+        }
+
+        .content-area {
+            flex: 1;
+            max-width: 800px;
+            min-width: 0;
+        }
+
+        .table-of-contents {
+            width: 250px;
+            flex-shrink: 0;
+            position: sticky;
+            top: 100px;
+            height: fit-content;
+            max-height: calc(100vh - 120px);
+            overflow-y: auto;
+            background-color: hsl(var(--card));
+            border: 1px solid hsl(var(--border));
+            border-radius: var(--radius);
+            padding: 1rem;
+        }
+
+        .toc-header {
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid hsl(var(--border));
+        }
+
+        .toc-header h3 {
+            margin: 0;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: hsl(var(--foreground));
+            text-transform: uppercase;
+            letter-spacing: 0.025em;
+        }
+
+        .toc-nav {
+            font-size: 0.875rem;
+        }
+
+        .toc-nav ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .toc-nav li {
+            margin-bottom: 0.25rem;
+        }
+
+        .toc-nav a {
+            display: block;
+            padding: 0.25rem 0.5rem;
+            color: hsl(var(--muted-foreground));
+            text-decoration: none;
+            border-radius: calc(var(--radius) - 2px);
+            transition: all 0.2s;
+            font-size: 0.75rem;
+            line-height: 1.4;
+            border-left: 2px solid transparent;
+        }
+
+        .toc-nav a:hover {
+            background-color: hsl(var(--accent));
+            color: hsl(var(--foreground));
+            border-left-color: hsl(var(--primary) / 0.5);
+        }
+
+        .toc-nav a.active {
+            background-color: hsl(var(--primary) / 0.1);
+            color: hsl(var(--primary));
+            border-left-color: hsl(var(--primary));
+            font-weight: 500;
+        }
+
+        .toc-level-1 {
+            margin-left: 0;
+        }
+
+        .toc-level-2 {
+            margin-left: 0;
+        }
+
+        .toc-level-3 {
+            margin-left: 1rem;
+        }
+
+        .toc-level-4 {
+            margin-left: 1.5rem;
+        }
+
+        .toc-level-5 {
+            margin-left: 2rem;
+        }
+
+        .toc-level-6 {
+            margin-left: 2.5rem;
+        }
+
+        .toc-level-3 a,
+        .toc-level-4 a,
+        .toc-level-5 a,
+        .toc-level-6 a {
+            font-size: 0.7rem;
+            padding: 0.2rem 0.4rem;
+        }
+
         .main-content {
             flex: 1;
             padding: 2rem;
@@ -558,7 +671,6 @@
 
         .content-section {
             display: none;
-            max-width: 800px;
             width: 100%;
         }
 
@@ -659,6 +771,23 @@
 
             .main-content {
                 padding: 1rem;
+            }
+
+            .content-wrapper {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .table-of-contents {
+                position: static;
+                width: 100%;
+                max-height: none;
+                order: -1;
+                margin-bottom: 1rem;
+            }
+
+            .content-area {
+                max-width: none;
             }
 
             .social-links {
@@ -960,11 +1089,13 @@ python3 -m http.server 8000
         </aside>
 
         <main class="main-content">
+            <div class="content-wrapper">
+                <div class="content-area">
 
             <section class="content-section active" id="introduction/what-is-glowdoc">
-                <h1>What is GlowDoc?</h1>
+                <h1 id="what-is-glowdoc">What is GlowDoc?</h1>
 <p>GlowDoc is a modern, lightweight documentation template that presents a beautiful thoughtful space for your work. It's built with pure HTML, CSS, and minimal JavaScript to ensure fast loading times and easy customization.</p>
-<h2>Key Features</h2>
+<h2 id="key-features">Key Features</h2>
 <ul>
 <li><strong>Modern Design</strong> - Clean, professional appearance with attention to typography and spacing</li>
 <li><strong>Dark Mode</strong> - Built-in dark mode support with smooth transitions</li>
@@ -973,7 +1104,7 @@ python3 -m http.server 8000
 <li><strong>Accessible</strong> - Built with accessibility best practices</li>
 <li><strong>Customizable</strong> - Easy to modify colors, fonts, and layout</li>
 </ul>
-<h2>Perfect For</h2>
+<h2 id="perfect-for">Perfect For</h2>
 <p>GlowDoc is ideal for:</p>
 <ul>
 <li>Project documentation</li>
@@ -982,16 +1113,16 @@ python3 -m http.server 8000
 <li>Knowledge bases</li>
 <li>Technical blogs</li>
 </ul>
-<h2>Philosophy</h2>
+<h2 id="philosophy">Philosophy</h2>
 <p>We believe documentation should be beautiful, fast, and accessible. GlowDoc follows these principles by providing a clean, distraction-free reading experience that focuses on your content.</p>
 
             </section>
             <section class="content-section" id="introduction/quick-start">
-                <h1>Quick Start</h1>
+                <h1 id="quick-start">Quick Start</h1>
 <p>Get up and running with GlowDoc in minutes. This comprehensive guide will walk you through installation, setup, and creating your first professional documentation site.</p>
-<h2>Prerequisites</h2>
+<h2 id="prerequisites">Prerequisites</h2>
 <p>Before you begin, ensure you have the following installed:</p>
-<h3>Required Software</h3>
+<h3 id="required-software">Required Software</h3>
 <p><strong>Rust (Latest Stable)</strong></p>
 <pre><code class="language-bash"># Install Rust using rustup (recommended)
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
@@ -1021,16 +1152,16 @@ python3 --version
 # Python is usually pre-installed on macOS/Linux
 # Windows: Download from https://python.org
 </code></pre>
-<h3>System Requirements</h3>
+<h3 id="system-requirements">System Requirements</h3>
 <ul>
 <li><strong>Operating System</strong>: macOS, Linux, or Windows</li>
 <li><strong>RAM</strong>: 512MB minimum, 1GB recommended</li>
 <li><strong>Disk Space</strong>: 100MB for Rust toolchain + project files</li>
 <li><strong>Network</strong>: Internet connection for dependencies (initial setup only)</li>
 </ul>
-<h2>Installation Options</h2>
+<h2 id="installation-options">Installation Options</h2>
 <p>Choose the installation method that best fits your workflow:</p>
-<h3>Option 1: Download Release (Quickest)</h3>
+<h3 id="option-1-download-release-quickest">Option 1: Download Release (Quickest)</h3>
 <ol>
 <li>
 <p><strong>Download the latest release:</strong></p>
@@ -1046,7 +1177,7 @@ cd glowdoc-main
 </code></pre>
 </li>
 </ol>
-<h3>Option 2: Clone Repository (Recommended for Development)</h3>
+<h3 id="option-2-clone-repository-recommended-for-development">Option 2: Clone Repository (Recommended for Development)</h3>
 <ol>
 <li>
 <p><strong>Clone the repository:</strong></p>
@@ -1060,7 +1191,7 @@ cd glowdoc
 </code></pre>
 </li>
 </ol>
-<h3>Option 3: Start Fresh Project</h3>
+<h3 id="option-3-start-fresh-project">Option 3: Start Fresh Project</h3>
 <ol>
 <li>
 <p><strong>Create new project directory:</strong></p>
@@ -1080,7 +1211,7 @@ cd my-docs
 </code></pre>
 </li>
 </ol>
-<h2>Project Structure Overview</h2>
+<h2 id="project-structure-overview">Project Structure Overview</h2>
 <p>Understanding GlowDoc's structure helps you work effectively:</p>
 <pre><code>glowdoc/
 ├── Cargo.toml              # Rust project configuration
@@ -1102,15 +1233,15 @@ cd my-docs
 ├── README.md              # Project information
 └── .gitignore             # Git ignore rules
 </code></pre>
-<h3>Key Directories</h3>
+<h3 id="key-directories">Key Directories</h3>
 <ul>
 <li><strong><code>docs/</code></strong>: Your markdown documentation files</li>
 <li><strong><code>src/</code></strong>: GlowDoc's Rust source code (modify for customization)</li>
 <li><strong><code>index.html</code></strong>: Generated single-file documentation site</li>
 </ul>
-<h2>5-Minute Setup</h2>
+<h2 id="5-minute-setup">5-Minute Setup</h2>
 <p>Follow these steps to have a working documentation site in 5 minutes:</p>
-<h3>Step 1: Build Your First Site (1 minute)</h3>
+<h3 id="step-1-build-your-first-site-1-minute">Step 1: Build Your First Site (1 minute)</h3>
 <pre><code class="language-bash"># After installation, build immediately
 cargo run --release
 
@@ -1118,7 +1249,7 @@ cargo run --release
 # &quot;Building documentation...&quot;
 # &quot;Generated index.html successfully&quot;
 </code></pre>
-<h3>Step 2: Preview Your Site (30 seconds)</h3>
+<h3 id="step-2-preview-your-site-30-seconds">Step 2: Preview Your Site (30 seconds)</h3>
 <pre><code class="language-bash"># Start local server
 python3 -m http.server 8000
 
@@ -1135,7 +1266,7 @@ php -S localhost:8000
 # Python 2 users
 python -m SimpleHTTPServer 8000
 </code></pre>
-<h3>Step 3: Verify Everything Works (30 seconds)</h3>
+<h3 id="step-3-verify-everything-works-30-seconds">Step 3: Verify Everything Works (30 seconds)</h3>
 <p>Check these features in your browser:</p>
 <ul>
 <li><input disabled="" type="checkbox"/>
@@ -1151,7 +1282,7 @@ Mobile responsive design</li>
 <li><input disabled="" type="checkbox"/>
 All documentation pages display</li>
 </ul>
-<h3>Step 4: Customize Your Content (3 minutes)</h3>
+<h3 id="step-4-customize-your-content-3-minutes">Step 4: Customize Your Content (3 minutes)</h3>
 <ol>
 <li>
 <p><strong>Update site information:</strong></p>
@@ -1190,8 +1321,8 @@ echo &quot;# My First Page\n\nThis is my first documentation page.&quot; &gt; do
 </code></pre>
 </li>
 </ol>
-<h2>Configuration Walkthrough</h2>
-<h3>Automatic Configuration (Recommended)</h3>
+<h2 id="configuration-walkthrough">Configuration Walkthrough</h2>
+<h3 id="automatic-configuration-recommended">Automatic Configuration (Recommended)</h3>
 <p>Let GlowDoc detect and configure your documentation structure automatically:</p>
 <pre><code class="language-bash"># Interactive configuration wizard
 cargo run init-config
@@ -1218,7 +1349,7 @@ Enter new order (comma-separated): introduction,getting-started,advanced
 Configuration saved to docs/config.yaml
 Backup created: docs/config.yaml.backup
 </code></pre>
-<h3>Manual Configuration</h3>
+<h3 id="manual-configuration">Manual Configuration</h3>
 <p>For precise control, edit <code>docs/config.yaml</code> directly:</p>
 <pre><code class="language-yaml">title: My Project Documentation
 description: Everything you need to know about My Project
@@ -1245,7 +1376,7 @@ navigation:
         id: configuration
         file: guide/configuration.md
 </code></pre>
-<h3>Command-Line Configuration</h3>
+<h3 id="command-line-configuration">Command-Line Configuration</h3>
 <p>For automated workflows, use CLI arguments:</p>
 <pre><code class="language-bash"># Complete automated setup
 cargo run init-config \
@@ -1257,9 +1388,9 @@ cargo run init-config \
   --page-order guide=installation.md,configuration.md,usage.md \
   --exclude-section drafts
 </code></pre>
-<h2>Content Creation Guide</h2>
-<h3>Writing Effective Documentation</h3>
-<h4>Markdown Basics</h4>
+<h2 id="content-creation-guide">Content Creation Guide</h2>
+<h3 id="writing-effective-documentation">Writing Effective Documentation</h3>
+<h4 id="markdown-basics">Markdown Basics</h4>
 <p>GlowDoc supports GitHub-flavored markdown with extensions:</p>
 <pre><code class="language-markdown"># Page Title (H1 - use only once per page)
 
@@ -1315,7 +1446,7 @@ Provide practical examples:
 # Command examples
 cargo run --release
 </code></pre>
-<h2>Next Steps</h2>
+<h2 id="next-steps">Next Steps</h2>
 <p>Guide readers to related pages or next actions.</p>
 <pre><code>
 ### Organizing Your Content
@@ -1381,29 +1512,29 @@ cargo run init-config
 </code></pre>
 </li>
 </ol>
-<h2>Theme Customization</h2>
-<h3>Built-in Themes</h3>
+<h2 id="theme-customization">Theme Customization</h2>
+<h3 id="built-in-themes">Built-in Themes</h3>
 <p>GlowDoc includes three professionally designed themes:</p>
 <pre><code class="language-yaml"># In docs/config.yaml
 theme: default  # Clean, professional
 theme: purple   # Purple accents
 theme: vibrant  # Colorful, energetic
 </code></pre>
-<h3>Quick Theme Preview</h3>
+<h3 id="quick-theme-preview">Quick Theme Preview</h3>
 <pre><code class="language-bash"># Try different themes quickly
 sed -i 's/theme: .*/theme: purple/' docs/config.yaml &amp;&amp; cargo run --release
 sed -i 's/theme: .*/theme: vibrant/' docs/config.yaml &amp;&amp; cargo run --release
 sed -i 's/theme: .*/theme: default/' docs/config.yaml &amp;&amp; cargo run --release
 </code></pre>
-<h3>Dark Mode</h3>
+<h3 id="dark-mode">Dark Mode</h3>
 <p>All themes include automatic dark mode:</p>
 <ul>
 <li><strong>System preference detection</strong>: Respects user's OS setting</li>
 <li><strong>Manual toggle</strong>: Click the theme button in header</li>
 <li><strong>Persistent choice</strong>: Remembers user preference</li>
 </ul>
-<h2>Development Workflow</h2>
-<h3>Efficient Development Loop</h3>
+<h2 id="development-workflow">Development Workflow</h2>
+<h3 id="efficient-development-loop">Efficient Development Loop</h3>
 <pre><code class="language-bash"># 1. Edit your markdown files
 vim docs/guides/new-page.md
 
@@ -1413,7 +1544,7 @@ cargo run --release
 # 3. Refresh browser (server keeps running)
 # No need to restart python server
 </code></pre>
-<h3>File Watching (Optional)</h3>
+<h3 id="file-watching-optional">File Watching (Optional)</h3>
 <p>For automatic rebuilds on file changes:</p>
 <pre><code class="language-bash"># Install cargo-watch
 cargo install cargo-watch
@@ -1421,7 +1552,7 @@ cargo install cargo-watch
 # Watch for changes and rebuild
 cargo watch -x &quot;run --release&quot;
 </code></pre>
-<h3>Version Control Integration</h3>
+<h3 id="version-control-integration">Version Control Integration</h3>
 <pre><code class="language-bash"># Initialize git repository
 git init
 
@@ -1433,8 +1564,8 @@ git commit -m &quot;Initial documentation setup&quot;
 echo &quot;target/&quot; &gt;&gt; .gitignore
 echo &quot;index.html&quot; &gt;&gt; .gitignore  # Generated file
 </code></pre>
-<h2>Testing Your Documentation</h2>
-<h3>Pre-Deployment Checklist</h3>
+<h2 id="testing-your-documentation">Testing Your Documentation</h2>
+<h3 id="pre-deployment-checklist">Pre-Deployment Checklist</h3>
 <pre><code class="language-bash"># 1. Build successfully
 cargo run --release
 
@@ -1448,7 +1579,7 @@ html-validate index.html
 # 4. Test locally
 python3 -m http.server 8000
 </code></pre>
-<h3>Manual Testing</h3>
+<h3 id="manual-testing">Manual Testing</h3>
 <p>Visit <code>http://localhost:8000</code> and verify:</p>
 <ul>
 <li><input disabled="" type="checkbox"/>
@@ -1466,15 +1597,15 @@ python3 -m http.server 8000
 <li><input disabled="" type="checkbox"/>
 <strong>Performance</strong>: Pages load quickly</li>
 </ul>
-<h3>Accessibility Testing</h3>
+<h3 id="accessibility-testing">Accessibility Testing</h3>
 <pre><code class="language-bash"># Install axe-core CLI (optional)
 npm install -g @axe-core/cli
 
 # Test accessibility
 axe http://localhost:8000
 </code></pre>
-<h2>Common Issues and Solutions</h2>
-<h3>Build Problems</h3>
+<h2 id="common-issues-and-solutions">Common Issues and Solutions</h2>
+<h3 id="build-problems">Build Problems</h3>
 <p><strong>&quot;cargo: command not found&quot;</strong></p>
 <pre><code class="language-bash"># Install Rust
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
@@ -1491,7 +1622,7 @@ python3 -c &quot;import yaml; yaml.safe_load(open('docs/config.yaml'))&quot;
 # Check file references exist
 ls docs/introduction/quick-start.md
 </code></pre>
-<h3>Server Issues</h3>
+<h3 id="server-issues">Server Issues</h3>
 <p><strong>&quot;Address already in use&quot;</strong></p>
 <pre><code class="language-bash"># Find and kill process using port 8000
 lsof -ti:8000 | xargs kill
@@ -1506,7 +1637,7 @@ ls index.html
 # Rebuild if missing
 cargo run --release
 </code></pre>
-<h3>Content Problems</h3>
+<h3 id="content-problems">Content Problems</h3>
 <p><strong>Page not appearing in navigation</strong></p>
 <pre><code class="language-bash"># Ensure file is referenced in config.yaml
 grep -r &quot;filename.md&quot; docs/config.yaml
@@ -1521,9 +1652,9 @@ cargo run --release
 # Check file has H1 heading
 head -5 docs/section/page.md
 </code></pre>
-<h2>Next Steps</h2>
+<h2 id="next-steps">Next Steps</h2>
 <p>Congratulations! You now have a working GlowDoc site. Here's what to explore next:</p>
-<h3>Immediate Actions</h3>
+<h3 id="immediate-actions">Immediate Actions</h3>
 <ol>
 <li>
 <p><strong>Add Your Content</strong></p>
@@ -1550,7 +1681,7 @@ head -5 docs/section/page.md
 </ul>
 </li>
 </ol>
-<h3>Advanced Features</h3>
+<h3 id="advanced-features">Advanced Features</h3>
 <ol>
 <li>
 <p><strong>Learn Configuration Management</strong></p>
@@ -1585,14 +1716,14 @@ head -5 docs/section/page.md
 </ul>
 </li>
 </ol>
-<h3>Community and Support</h3>
+<h3 id="community-and-support">Community and Support</h3>
 <ul>
 <li><strong>Documentation</strong>: Continue with <a href="../getting-started/first-steps.md">First Steps</a></li>
 <li><strong>Examples</strong>: Browse sample configurations and setups</li>
 <li><strong>Issues</strong>: Report problems or request features</li>
 <li><strong>Contributions</strong>: Help improve GlowDoc</li>
 </ul>
-<h3>Pro Tips</h3>
+<h3 id="pro-tips">Pro Tips</h3>
 <ol>
 <li><strong>Keep It Simple</strong>: Start with basic setup, add complexity gradually</li>
 <li><strong>Test Early</strong>: Preview changes frequently during development</li>
@@ -1604,9 +1735,9 @@ head -5 docs/section/page.md
 
             </section>
             <section class="content-section" id="getting-started/first-steps">
-                <h1>First Steps</h1>
+                <h1 id="first-steps">First Steps</h1>
 <p>Now that you have GlowDoc installed, let's build your first documentation site step by step.</p>
-<h2>1. Initialize Your Project</h2>
+<h2 id="1-initialize-your-project">1. Initialize Your Project</h2>
 <p>Start by setting up the basic structure for your documentation:</p>
 <pre><code class="language-bash"># Create a new project directory
 mkdir my-docs
@@ -1615,7 +1746,7 @@ cd my-docs
 # Download or clone GlowDoc
 # Then copy the src/ and docs/ folders to your project
 </code></pre>
-<h2>2. Generate Your Configuration</h2>
+<h2 id="2-generate-your-configuration">2. Generate Your Configuration</h2>
 <p>Use the interactive config builder to set up your site structure:</p>
 <pre><code class="language-bash"># Interactive mode - walks you through setup
 cargo run init-config
@@ -1627,7 +1758,7 @@ cargo run init-config
 <li>Generate a <code>docs/config.yaml</code> file</li>
 <li>Create a backup of any existing configuration</li>
 </ul>
-<h3>Example Interactive Session</h3>
+<h3 id="example-interactive-session">Example Interactive Session</h3>
 <pre><code>GlowDoc Configuration Builder
 ============================
 
@@ -1644,8 +1775,8 @@ Enter section order (comma-separated): introduction,getting-started,api
 
 Configuration saved to docs/config.yaml
 </code></pre>
-<h2>3. Create Your Content</h2>
-<h3>Homepage Content</h3>
+<h2 id="3-create-your-content">3. Create Your Content</h2>
+<h3 id="homepage-content">Homepage Content</h3>
 <p>Create or edit <code>docs/entry.md</code> for your homepage:</p>
 <pre><code class="language-markdown"># My Project Documentation
 
@@ -1661,7 +1792,7 @@ Follow our step-by-step guides to get up and running quickly.
 - Feature 2: Description
 - Feature 3: Description
 </code></pre>
-<h3>Add Documentation Pages</h3>
+<h3 id="add-documentation-pages">Add Documentation Pages</h3>
 <p>Create markdown files in organized folders:</p>
 <pre><code>docs/
 ├── entry.md
@@ -1685,13 +1816,13 @@ Your content here...
 
 More content...
 </code></pre>
-<h2>4. Build Your Site</h2>
+<h2 id="4-build-your-site">4. Build Your Site</h2>
 <p>Generate the documentation site:</p>
 <pre><code class="language-bash"># Build the complete site
 cargo run --release
 </code></pre>
 <p>This creates <code>index.html</code> with your entire documentation site embedded as a single file.</p>
-<h2>5. Preview Your Site</h2>
+<h2 id="5-preview-your-site">5. Preview Your Site</h2>
 <p>Start a local server to preview your documentation:</p>
 <pre><code class="language-bash"># Serve the site locally
 python3 -m http.server 8000
@@ -1701,14 +1832,14 @@ python3 -m http.server 8000
 # php -S localhost:8000
 </code></pre>
 <p>Visit <code>http://localhost:8000</code> to see your documentation site.</p>
-<h2>6. Customize the Appearance</h2>
-<h3>Update Site Information</h3>
+<h2 id="6-customize-the-appearance">6. Customize the Appearance</h2>
+<h3 id="update-site-information">Update Site Information</h3>
 <p>Edit <code>docs/config.yaml</code> to customize your site:</p>
 <pre><code class="language-yaml">title: My Project Documentation
 description: Everything you need to know about My Project
 theme: vibrant  # or 'default'
 </code></pre>
-<h3>Adjust Navigation</h3>
+<h3 id="adjust-navigation">Adjust Navigation</h3>
 <p>Reorder sections and pages by editing the navigation structure:</p>
 <pre><code class="language-yaml">navigation:
   - title: Introduction
@@ -1721,13 +1852,13 @@ theme: vibrant  # or 'default'
         id: installation
         file: introduction/installation.md
 </code></pre>
-<h3>Rebuild After Changes</h3>
+<h3 id="rebuild-after-changes">Rebuild After Changes</h3>
 <p>After modifying configuration or content:</p>
 <pre><code class="language-bash">cargo run --release
 </code></pre>
-<h2>7. Development Workflow</h2>
+<h2 id="7-development-workflow">7. Development Workflow</h2>
 <p>Establish an efficient workflow for ongoing documentation work:</p>
-<h3>Quick Development Loop</h3>
+<h3 id="quick-development-loop">Quick Development Loop</h3>
 <pre><code class="language-bash"># 1. Edit markdown files in docs/
 # 2. Rebuild the site
 cargo run --release
@@ -1735,7 +1866,7 @@ cargo run --release
 # 3. Refresh browser to see changes
 # (No need to restart the server)
 </code></pre>
-<h3>Adding New Pages</h3>
+<h3 id="adding-new-pages">Adding New Pages</h3>
 <ol>
 <li>Create the markdown file in the appropriate <code>docs/</code> subfolder</li>
 <li>Run the config generator to update navigation:
@@ -1747,7 +1878,7 @@ cargo run --release
 </code></pre>
 </li>
 </ol>
-<h3>Reorganizing Content</h3>
+<h3 id="reorganizing-content">Reorganizing Content</h3>
 <p>Use CLI options for batch updates:</p>
 <pre><code class="language-bash"># Reorder sections and rename them
 cargo run init-config \
@@ -1755,7 +1886,7 @@ cargo run init-config \
   --rename-section intro=&quot;Getting Started&quot; \
   --rename-section guide=&quot;User Guide&quot;
 </code></pre>
-<h2>Next Steps</h2>
+<h2 id="next-steps">Next Steps</h2>
 <p>Now that you have a working documentation site:</p>
 <ol>
 <li><strong>Explore Customization</strong>: Learn about theming and styling options</li>
@@ -1763,27 +1894,27 @@ cargo run init-config \
 <li><strong>Deploy Your Site</strong>: Set up hosting for your documentation</li>
 <li><strong>Advanced Features</strong>: Explore plugins and advanced configuration</li>
 </ol>
-<h2>Common Tasks</h2>
-<h3>Adding a New Section</h3>
+<h2 id="common-tasks">Common Tasks</h2>
+<h3 id="adding-a-new-section">Adding a New Section</h3>
 <ol>
 <li>Create a new folder in <code>docs/</code>: <code>mkdir docs/new-section</code></li>
 <li>Add markdown files to the folder</li>
 <li>Run <code>cargo run init-config</code> to detect the new section</li>
 <li>Rebuild: <code>cargo run --release</code></li>
 </ol>
-<h3>Reordering Pages</h3>
+<h3 id="reordering-pages">Reordering Pages</h3>
 <pre><code class="language-bash">cargo run init-config --page-order section=page1.md,page2.md,page3.md
 </code></pre>
-<h3>Excluding Draft Content</h3>
+<h3 id="excluding-draft-content">Excluding Draft Content</h3>
 <pre><code class="language-bash">cargo run init-config --exclude-section drafts
 </code></pre>
-<h3>Custom Page Titles</h3>
+<h3 id="custom-page-titles">Custom Page Titles</h3>
 <p>Override auto-detected titles in <code>docs/config.yaml</code>:</p>
 <pre><code class="language-yaml">- title: Custom Navigation Title
   id: page-id
   file: section/actual-filename.md
 </code></pre>
-<h2>Troubleshooting</h2>
+<h2 id="troubleshooting">Troubleshooting</h2>
 <p><strong>Build errors</strong>: Check that all files referenced in <code>config.yaml</code> exist and paths are correct.</p>
 <p><strong>Missing navigation</strong>: Ensure your markdown files have H1 headers and are included in the config.</p>
 <p><strong>Styling issues</strong>: Verify the theme setting in config.yaml and rebuild the site.</p>
@@ -1791,16 +1922,16 @@ cargo run init-config \
 
             </section>
             <section class="content-section" id="getting-started/setup/setup-installation">
-                <h1>Installation</h1>
+                <h1 id="installation">Installation</h1>
 <p>GlowDoc is designed to be simple to set up. Choose the method that works best for your workflow.</p>
-<h2>Download Template</h2>
+<h2 id="download-template">Download Template</h2>
 <p>The easiest way to get started is to download the template directly:</p>
 <pre><code class="language-bash"># Download and extract
 wget https://github.com/paradise-runner/glowdoc/archive/main.zip
 unzip main.zip
 cd glowdoc-main
 </code></pre>
-<h2>Clone Repository</h2>
+<h2 id="clone-repository">Clone Repository</h2>
 <p>If you prefer to clone the repository:</p>
 <pre><code class="language-bash"># Clone the repository
 git clone https://github.com/paradise-runner/glowdoc.git
@@ -1810,14 +1941,14 @@ cd glowdoc
 rm -rf .git
 git init
 </code></pre>
-<h2>Use as Template</h2>
+<h2 id="use-as-template">Use as Template</h2>
 <p>Create a new repository using GlowDoc as a template on GitHub, then clone your new repository.</p>
 
             </section>
             <section class="content-section" id="getting-started/setup/setup-configuration">
-                <h1>Configuration</h1>
+                <h1 id="configuration">Configuration</h1>
 <p>GlowDoc provides flexible configuration options to customize your documentation site. All configuration is managed through the <code>docs/config.yaml</code> file.</p>
-<h2>config.yaml Overview</h2>
+<h2 id="config-yaml-overview">config.yaml Overview</h2>
 <p>The configuration file controls your site's structure, navigation, and appearance:</p>
 <pre><code class="language-yaml">title: GlowDoc
 description: modern docs for the modern world
@@ -1830,9 +1961,9 @@ navigation:
         id: what-is-glowdoc
         file: introduction/what-is-glowdoc.md
 </code></pre>
-<h2>Auto-Generate Configuration</h2>
+<h2 id="auto-generate-configuration">Auto-Generate Configuration</h2>
 <p>The easiest way to create or update your configuration is using the built-in generator:</p>
-<h3>Interactive Mode</h3>
+<h3 id="interactive-mode">Interactive Mode</h3>
 <pre><code class="language-bash">cargo run init-config
 </code></pre>
 <p>This launches an interactive wizard that:</p>
@@ -1843,7 +1974,7 @@ navigation:
 <li>Guides you through customization options</li>
 <li>Backs up your existing config before generating a new one</li>
 </ul>
-<h3>Command-Line Mode</h3>
+<h3 id="command-line-mode">Command-Line Mode</h3>
 <p>For automated workflows, use CLI arguments:</p>
 <pre><code class="language-bash">cargo run init-config \
   --title &quot;My Project&quot; \
@@ -1854,7 +1985,7 @@ navigation:
   --page-order guide=setup.md,configuration.md,usage.md \
   --exclude-section drafts
 </code></pre>
-<h3>Available CLI Options</h3>
+<h3 id="available-cli-options">Available CLI Options</h3>
 <ul>
 <li><code>--title &quot;Site Title&quot;</code> - Set the site title</li>
 <li><code>--description &quot;Description&quot;</code> - Set the site description</li>
@@ -1865,13 +1996,13 @@ navigation:
 <li><code>--exclude-section folder</code> - Exclude folders from navigation</li>
 <li><code>--help</code> - Show complete usage guide</li>
 </ul>
-<h2>Manual Configuration</h2>
-<h3>Basic Settings</h3>
+<h2 id="manual-configuration">Manual Configuration</h2>
+<h3 id="basic-settings">Basic Settings</h3>
 <pre><code class="language-yaml">title: Your Project Name
 description: Brief description for SEO and page meta
 theme: vibrant  # or 'default'
 </code></pre>
-<h3>Navigation Structure</h3>
+<h3 id="navigation-structure">Navigation Structure</h3>
 <p>Navigation follows a hierarchical structure with sections and items:</p>
 <pre><code class="language-yaml">navigation:
   - title: Section Name
@@ -1888,14 +2019,14 @@ theme: vibrant  # or 'default'
 <li><code>file</code> path is relative to the <code>docs/</code> folder</li>
 <li>Pages are displayed in the order they appear in the config</li>
 </ul>
-<h3>Themes</h3>
+<h3 id="themes">Themes</h3>
 <p>GlowDoc includes built-in themes:</p>
 <ul>
 <li><code>default</code> - Clean, professional appearance</li>
 <li><code>vibrant</code> - Bold colors with enhanced contrast</li>
 </ul>
-<h2>File Organization</h2>
-<h3>Recommended Structure</h3>
+<h2 id="file-organization">File Organization</h2>
+<h3 id="recommended-structure">Recommended Structure</h3>
 <pre><code>docs/
 ├── config.yaml          # Navigation configuration
 ├── entry.md            # Homepage content (optional)
@@ -1909,41 +2040,41 @@ theme: vibrant  # or 'default'
     ├── api.md
     └── cli.md
 </code></pre>
-<h3>Markdown Files</h3>
+<h3 id="markdown-files">Markdown Files</h3>
 <p>Each markdown file should start with an H1 header:</p>
 <pre><code class="language-markdown"># Page Title
 
 Content goes here...
 </code></pre>
 <p>The H1 title is automatically extracted during config generation and used as the default page title.</p>
-<h2>Advanced Configuration</h2>
-<h3>Custom Page Titles</h3>
+<h2 id="advanced-configuration">Advanced Configuration</h2>
+<h3 id="custom-page-titles">Custom Page Titles</h3>
 <p>Override the auto-detected title from the markdown H1:</p>
 <pre><code class="language-yaml">- title: Custom Page Title  # Shows in navigation
   id: custom-page
   file: section/actual-filename.md  # H1 in file can be different
 </code></pre>
-<h3>Section Ordering</h3>
+<h3 id="section-ordering">Section Ordering</h3>
 <p>Control the order sections appear in navigation:</p>
 <pre><code class="language-bash">cargo run init-config --section-order introduction,tutorial,reference,advanced
 </code></pre>
-<h3>Page Ordering</h3>
+<h3 id="page-ordering">Page Ordering</h3>
 <p>Control the order pages appear within each section:</p>
 <pre><code class="language-bash">cargo run init-config --page-order tutorial=setup.md,basics.md,advanced.md
 </code></pre>
-<h2>Development Workflow</h2>
+<h2 id="development-workflow">Development Workflow</h2>
 <ol>
 <li><strong>Edit Configuration</strong>: Modify <code>docs/config.yaml</code> or use <code>cargo run init-config</code></li>
 <li><strong>Update Content</strong>: Edit markdown files in the <code>docs/</code> folder</li>
 <li><strong>Rebuild Site</strong>: Run <code>cargo run --release</code> to regenerate <code>index.html</code></li>
 <li><strong>Preview Changes</strong>: Use <code>python3 -m http.server 8000</code> to serve locally</li>
 </ol>
-<h2>Troubleshooting</h2>
-<h3>Common Issues</h3>
+<h2 id="troubleshooting">Troubleshooting</h2>
+<h3 id="common-issues">Common Issues</h3>
 <p><strong>Config validation errors:</strong> Ensure all <code>id</code> fields are unique and all referenced files exist.</p>
 <p><strong>Missing pages:</strong> Check that file paths in config.yaml are correct and relative to the <code>docs/</code> folder.</p>
 <p><strong>Build failures:</strong> Verify YAML syntax in config.yaml using a YAML validator.</p>
-<h3>Backup and Recovery</h3>
+<h3 id="backup-and-recovery">Backup and Recovery</h3>
 <p>The config generator automatically creates backups:</p>
 <ul>
 <li><code>docs/config.yaml.backup</code> - Created before generating new config</li>
@@ -1952,26 +2083,26 @@ Content goes here...
 
             </section>
             <section class="content-section" id="customization/theming">
-                <h1>Theming</h1>
+                <h1 id="theming">Theming</h1>
 <p>GlowDoc features a sophisticated theming system built on CSS custom properties, supporting multiple color schemes and seamless dark mode switching.</p>
-<h2>Built-in Themes</h2>
+<h2 id="built-in-themes">Built-in Themes</h2>
 <p>GlowDoc includes three professionally designed themes:</p>
-<h3>Default Theme</h3>
+<h3 id="default-theme">Default Theme</h3>
 <p>Clean, neutral design perfect for professional documentation:</p>
 <pre><code class="language-yaml"># In docs/config.yaml
 theme: default
 </code></pre>
-<h3>Purple Theme</h3>
+<h3 id="purple-theme">Purple Theme</h3>
 <p>Purple-accented design with elegant color tones:</p>
 <pre><code class="language-yaml">theme: purple
 </code></pre>
-<h3>Vibrant Theme</h3>
+<h3 id="vibrant-theme">Vibrant Theme</h3>
 <p>Colorful, energetic design with bold accents:</p>
 <pre><code class="language-yaml">theme: vibrant
 </code></pre>
-<h2>Color System Architecture</h2>
+<h2 id="color-system-architecture">Color System Architecture</h2>
 <p>GlowDoc uses a semantic color system with HSL values for precise color control and smooth transitions.</p>
-<h3>Core Color Properties</h3>
+<h3 id="core-color-properties">Core Color Properties</h3>
 <p>All themes use the same CSS custom property structure:</p>
 <pre><code class="language-css">:root {
   /* Background colors */
@@ -2005,7 +2136,7 @@ theme: default
   --radius: 0.5rem;
 }
 </code></pre>
-<h3>Dark Mode Support</h3>
+<h3 id="dark-mode-support">Dark Mode Support</h3>
 <p>Each theme automatically includes dark mode variants:</p>
 <pre><code class="language-css">[data-theme=&quot;dark&quot;] {
   --background: 222.2 84% 4.9%;
@@ -2020,13 +2151,13 @@ theme: default
 <li>Smooth 0.3s transitions between themes</li>
 <li>Optimized contrast ratios for readability</li>
 </ul>
-<h2>Typography System</h2>
-<h3>Font Stack</h3>
+<h2 id="typography-system">Typography System</h2>
+<h3 id="font-stack">Font Stack</h3>
 <p>GlowDoc uses a carefully selected system font stack for optimal performance and cross-platform consistency:</p>
 <pre><code class="language-css">font-family: -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, 
              Roboto, &quot;Helvetica Neue&quot;, Arial, sans-serif;
 </code></pre>
-<h3>Typography Scale</h3>
+<h3 id="typography-scale">Typography Scale</h3>
 <p><strong>Homepage Typography:</strong></p>
 <ul>
 <li><strong>Main Heading (H1):</strong> 3rem (48px), weight 800, gradient text effect</li>
@@ -2041,7 +2172,7 @@ theme: default
 <li><strong>Navigation:</strong> 0.875rem (14px), weight 500-600</li>
 <li><strong>Code:</strong> 0.875rem (14px) monospace</li>
 </ul>
-<h3>Special Typography Effects</h3>
+<h3 id="special-typography-effects">Special Typography Effects</h3>
 <p><strong>Gradient Text (Homepage):</strong></p>
 <pre><code class="language-css">background: linear-gradient(135deg, 
   hsl(var(--primary)), 
@@ -2050,7 +2181,7 @@ theme: default
 -webkit-background-clip: text;
 color: transparent;
 </code></pre>
-<h2>Spacing System</h2>
+<h2 id="spacing-system">Spacing System</h2>
 <p>GlowDoc uses a consistent spacing scale based on rem units:</p>
 <pre><code class="language-css">/* Spacing scale */
 --space-1: 0.25rem;  /* 4px */
@@ -2070,11 +2201,11 @@ color: transparent;
 <li>Content padding: <code>2rem</code> (32px)</li>
 <li>Large sections: <code>4rem</code> (64px)</li>
 </ul>
-<h2>Custom Theme Creation</h2>
-<h3>1. Modify Existing Theme</h3>
+<h2 id="custom-theme-creation">Custom Theme Creation</h2>
+<h3 id="1-modify-existing-theme">1. Modify Existing Theme</h3>
 <p>To customize an existing theme, you'll need to modify the CSS generation in the Rust source:</p>
 <p><strong>Location:</strong> <code>src/main.rs</code> in the <code>generate_css()</code> function</p>
-<h3>2. Color Customization</h3>
+<h3 id="2-color-customization">2. Color Customization</h3>
 <p>Update the HSL values for any theme:</p>
 <pre><code class="language-css">:root {
   /* Change primary brand color */
@@ -2086,7 +2217,7 @@ color: transparent;
   --accent-foreground: 0 0% 100%;
 }
 </code></pre>
-<h3>3. Typography Customization</h3>
+<h3 id="3-typography-customization">3. Typography Customization</h3>
 <p><strong>Custom Font Integration:</strong></p>
 <pre><code class="language-css">@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap');
 
@@ -2106,8 +2237,8 @@ h1 { font-size: 3rem; }
 h2 { font-size: 2rem; }
 h3 { font-size: 1.5rem; }
 </code></pre>
-<h2>Advanced Theming</h2>
-<h3>Custom CSS Properties</h3>
+<h2 id="advanced-theming">Advanced Theming</h2>
+<h3 id="custom-css-properties">Custom CSS Properties</h3>
 <p>Add your own custom properties for consistent theming:</p>
 <pre><code class="language-css">:root {
   /* Custom brand colors */
@@ -2124,7 +2255,7 @@ h3 { font-size: 1.5rem; }
   --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 </code></pre>
-<h3>Responsive Design Variables</h3>
+<h3 id="responsive-design-variables">Responsive Design Variables</h3>
 <pre><code class="language-css">:root {
   --mobile-breakpoint: 768px;
   --sidebar-width: 280px;
@@ -2138,7 +2269,7 @@ h3 { font-size: 1.5rem; }
   }
 }
 </code></pre>
-<h3>Animation Customization</h3>
+<h3 id="animation-customization">Animation Customization</h3>
 <pre><code class="language-css">:root {
   /* Transition speeds */
   --transition-fast: 0.15s;
@@ -2155,8 +2286,8 @@ h3 { font-size: 1.5rem; }
   transition: all var(--transition-normal) var(--ease-out);
 }
 </code></pre>
-<h2>Theme Implementation Details</h2>
-<h3>Theme Switching Mechanism</h3>
+<h2 id="theme-implementation-details">Theme Implementation Details</h2>
+<h3 id="theme-switching-mechanism">Theme Switching Mechanism</h3>
 <p>GlowDoc implements theme switching through:</p>
 <ol>
 <li><strong>Data attribute:</strong> <code>data-theme=&quot;light|dark&quot;</code> on the <code>&lt;html&gt;</code> element</li>
@@ -2164,21 +2295,21 @@ h3 { font-size: 1.5rem; }
 <li><strong>LocalStorage:</strong> Persistent user preference storage</li>
 <li><strong>System detection:</strong> Automatic theme based on user's OS preference</li>
 </ol>
-<h3>Color Accessibility</h3>
+<h3 id="color-accessibility">Color Accessibility</h3>
 <p>All themes maintain WCAG AA contrast ratios:</p>
 <ul>
 <li>Normal text: 4.5:1 contrast ratio</li>
 <li>Large text: 3:1 contrast ratio</li>
 <li>Interactive elements: Enhanced focus states</li>
 </ul>
-<h3>Performance Considerations</h3>
+<h3 id="performance-considerations">Performance Considerations</h3>
 <ul>
 <li>CSS custom properties enable instant theme switching</li>
 <li>No additional HTTP requests for theme assets</li>
 <li>Optimized for both light and dark viewing conditions</li>
 <li>Smooth transitions without layout shifts</li>
 </ul>
-<h2>Troubleshooting</h2>
+<h2 id="troubleshooting">Troubleshooting</h2>
 <p><strong>Theme not applying:</strong> Ensure the theme name in <code>config.yaml</code> matches exactly: <code>default</code>, <code>purple</code>, or <code>vibrant</code>.</p>
 <p><strong>Dark mode not working:</strong> Check that JavaScript is enabled and the browser supports CSS custom properties.</p>
 <p><strong>Custom colors not showing:</strong> Verify HSL values are properly formatted: <code>220 70% 50%</code> (without <code>hsl()</code> wrapper).</p>
@@ -2186,10 +2317,10 @@ h3 { font-size: 1.5rem; }
 
             </section>
             <section class="content-section" id="customization/components">
-                <h1>Components</h1>
+                <h1 id="components">Components</h1>
 <p>GlowDoc is built with a comprehensive component system that provides consistent, accessible, and responsive UI elements throughout your documentation site.</p>
-<h2>Layout Components</h2>
-<h3>Header Component</h3>
+<h2 id="layout-components">Layout Components</h2>
+<h3 id="header-component">Header Component</h3>
 <p>The main header provides navigation and theme switching functionality:</p>
 <p><strong>Structure:</strong></p>
 <pre><code class="language-html">&lt;header class=&quot;header-content&quot;&gt;
@@ -2208,7 +2339,7 @@ h3 { font-size: 1.5rem; }
 <li>Responsive container with max-width of 1200px</li>
 <li>Integrated theme toggle button</li>
 </ul>
-<h3>Sidebar Navigation</h3>
+<h3 id="sidebar-navigation">Sidebar Navigation</h3>
 <p>The collapsible sidebar houses the main navigation and search functionality:</p>
 <p><strong>Structure:</strong></p>
 <pre><code class="language-html">&lt;aside class=&quot;sidebar&quot;&gt;
@@ -2234,7 +2365,7 @@ h3 { font-size: 1.5rem; }
 <li>Integrated search with live results</li>
 <li>Mobile-responsive with overlay behavior</li>
 </ul>
-<h3>Main Content Area</h3>
+<h3 id="main-content-area">Main Content Area</h3>
 <p>The primary content container with optimal reading layout:</p>
 <p><strong>Structure:</strong></p>
 <pre><code class="language-html">&lt;main class=&quot;main-content&quot;&gt;
@@ -2251,8 +2382,8 @@ h3 { font-size: 1.5rem; }
 <li>Responsive padding (2rem desktop, 1rem mobile)</li>
 <li>Centered content with proper spacing</li>
 </ul>
-<h2>Navigation Components</h2>
-<h3>Navigation Links</h3>
+<h2 id="navigation-components">Navigation Components</h2>
+<h3 id="navigation-links">Navigation Links</h3>
 <p>Individual navigation items with active state support:</p>
 <p><strong>CSS Classes:</strong></p>
 <pre><code class="language-css">.nav-link {
@@ -2283,7 +2414,7 @@ h3 { font-size: 1.5rem; }
 <li>Smooth color transitions</li>
 <li>Accessible keyboard navigation</li>
 </ul>
-<h3>Section Headers</h3>
+<h3 id="section-headers">Section Headers</h3>
 <p>Collapsible section headers in the navigation:</p>
 <p><strong>Structure:</strong></p>
 <pre><code class="language-html">&lt;button class=&quot;nav-section-title&quot; data-section=&quot;section-id&quot;&gt;
@@ -2298,8 +2429,8 @@ h3 { font-size: 1.5rem; }
 <li>Maintains expanded state in LocalStorage</li>
 <li>Proper ARIA attributes for accessibility</li>
 </ul>
-<h2>Interactive Components</h2>
-<h3>Theme Toggle</h3>
+<h2 id="interactive-components">Interactive Components</h2>
+<h3 id="theme-toggle">Theme Toggle</h3>
 <p>The dark/light mode switcher with system preference detection:</p>
 <p><strong>Structure:</strong></p>
 <pre><code class="language-html">&lt;button class=&quot;theme-toggle&quot; aria-label=&quot;Toggle theme&quot;&gt;
@@ -2314,7 +2445,7 @@ h3 { font-size: 1.5rem; }
 <li>LocalStorage persistence for user preference</li>
 <li>0.3s transition for theme switching</li>
 </ul>
-<h3>Search Component</h3>
+<h3 id="search-component">Search Component</h3>
 <p>Live search functionality with instant results:</p>
 <p><strong>Structure:</strong></p>
 <pre><code class="language-html">&lt;div class=&quot;search-container&quot;&gt;
@@ -2338,7 +2469,7 @@ h3 { font-size: 1.5rem; }
 <li>Keyboard navigation support (arrow keys, Enter)</li>
 <li>Click or Enter to navigate to results</li>
 </ul>
-<h3>Mobile Menu</h3>
+<h3 id="mobile-menu">Mobile Menu</h3>
 <p>Responsive navigation for mobile devices:</p>
 <p><strong>Structure:</strong></p>
 <pre><code class="language-html">&lt;button class=&quot;mobile-menu-toggle&quot;&gt;
@@ -2354,8 +2485,8 @@ h3 { font-size: 1.5rem; }
 <li>Smooth slide-in animation from left</li>
 <li>Closes on backdrop click or page navigation</li>
 </ul>
-<h2>Content Components</h2>
-<h3>Code Blocks</h3>
+<h2 id="content-components">Content Components</h2>
+<h3 id="code-blocks">Code Blocks</h3>
 <p>Syntax-highlighted code blocks with proper formatting:</p>
 <p><strong>Markdown Usage:</strong></p>
 <pre><code class="language-markdown">```javascript
@@ -2378,7 +2509,7 @@ function greetUser(name) {
 <li>Horizontal scrolling for long lines</li>
 <li>Copy-friendly formatting</li>
 </ul>
-<h3>Content Sections</h3>
+<h3 id="content-sections">Content Sections</h3>
 <p>Organized content areas for each documentation page:</p>
 <p><strong>Structure:</strong></p>
 <pre><code class="language-html">&lt;div class=&quot;content-section&quot; id=&quot;unique-page-id&quot;&gt;
@@ -2396,7 +2527,7 @@ function greetUser(name) {
 <li>Proper heading hierarchy (H1 for page title, H2+ for sections)</li>
 <li>Semantic HTML structure for accessibility</li>
 </ul>
-<h3>Search Result Highlighting</h3>
+<h3 id="search-result-highlighting">Search Result Highlighting</h3>
 <p>Dynamic highlighting of search terms in content:</p>
 <p><strong>Generated Markup:</strong></p>
 <pre><code class="language-html">&lt;p&gt;This is some &lt;mark class=&quot;search-highlight&quot;&gt;highlighted&lt;/mark&gt; text.&lt;/p&gt;
@@ -2409,8 +2540,8 @@ function greetUser(name) {
   border-radius: 0.25rem;
 }
 </code></pre>
-<h2>Responsive Behavior</h2>
-<h3>Breakpoint System</h3>
+<h2 id="responsive-behavior">Responsive Behavior</h2>
+<h3 id="breakpoint-system">Breakpoint System</h3>
 <p>GlowDoc uses a mobile-first approach with a single breakpoint:</p>
 <pre><code class="language-css">/* Mobile styles (default) */
 .sidebar {
@@ -2427,7 +2558,7 @@ function greetUser(name) {
   }
 }
 </code></pre>
-<h3>Mobile Adaptations</h3>
+<h3 id="mobile-adaptations">Mobile Adaptations</h3>
 <p><strong>Sidebar Behavior:</strong></p>
 <ul>
 <li>Becomes full-screen overlay on mobile</li>
@@ -2448,8 +2579,8 @@ function greetUser(name) {
 <li>Touch-optimized interactive areas</li>
 <li>Simplified hover states for touch devices</li>
 </ul>
-<h2>Accessibility Features</h2>
-<h3>Keyboard Navigation</h3>
+<h2 id="accessibility-features">Accessibility Features</h2>
+<h3 id="keyboard-navigation">Keyboard Navigation</h3>
 <p><strong>Navigation Support:</strong></p>
 <ul>
 <li>Tab order follows logical content flow</li>
@@ -2463,7 +2594,7 @@ function greetUser(name) {
 <li>Focus trapped within mobile menu when open</li>
 <li>Focus restored when closing overlays</li>
 </ul>
-<h3>Screen Reader Support</h3>
+<h3 id="screen-reader-support">Screen Reader Support</h3>
 <p><strong>ARIA Labels:</strong></p>
 <pre><code class="language-html">&lt;button aria-label=&quot;Toggle theme&quot; class=&quot;theme-toggle&quot;&gt;
 &lt;input aria-label=&quot;Search documentation&quot; class=&quot;search-input&quot;&gt;
@@ -2476,7 +2607,7 @@ function greetUser(name) {
 <li>Descriptive link text</li>
 <li>Form labels associated with inputs</li>
 </ul>
-<h3>Color and Contrast</h3>
+<h3 id="color-and-contrast">Color and Contrast</h3>
 <p><strong>WCAG AA Compliance:</strong></p>
 <ul>
 <li>4.5:1 contrast ratio for normal text</li>
@@ -2484,8 +2615,8 @@ function greetUser(name) {
 <li>Enhanced focus states with both color and outline</li>
 <li>Color is not the only means of conveying information</li>
 </ul>
-<h2>Performance Optimizations</h2>
-<h3>CSS Architecture</h3>
+<h2 id="performance-optimizations">Performance Optimizations</h2>
+<h3 id="css-architecture">CSS Architecture</h3>
 <p><strong>Efficient Selectors:</strong></p>
 <ul>
 <li>Class-based selectors for performance</li>
@@ -2498,7 +2629,7 @@ function greetUser(name) {
 <li>Efficient property animations (opacity, transform)</li>
 <li>Reasonable transition durations (0.2s-0.3s)</li>
 </ul>
-<h3>JavaScript Optimization</h3>
+<h3 id="javascript-optimization">JavaScript Optimization</h3>
 <p><strong>Search Debouncing:</strong></p>
 <ul>
 <li>300ms delay to reduce excessive searches</li>
@@ -2511,8 +2642,8 @@ function greetUser(name) {
 <li>Passive event listeners where appropriate</li>
 <li>Memory leak prevention</li>
 </ul>
-<h2>Customization Examples</h2>
-<h3>Custom Navigation Styling</h3>
+<h2 id="customization-examples">Customization Examples</h2>
+<h3 id="custom-navigation-styling">Custom Navigation Styling</h3>
 <pre><code class="language-css">.nav-link {
   /* Add custom styles */
   border-left: 3px solid transparent;
@@ -2532,7 +2663,7 @@ function greetUser(name) {
   background-color: hsl(var(--primary) / 0.15);
 }
 </code></pre>
-<h3>Custom Search Styling</h3>
+<h3 id="custom-search-styling">Custom Search Styling</h3>
 <pre><code class="language-css">.search-container {
   /* Custom search appearance */
   background: hsl(var(--card));
@@ -2555,7 +2686,7 @@ function greetUser(name) {
   box-shadow: 0 0 0 3px hsl(var(--primary) / 0.1);
 }
 </code></pre>
-<h3>Custom Content Styling</h3>
+<h3 id="custom-content-styling">Custom Content Styling</h3>
 <pre><code class="language-css">.content-section {
   /* Enhanced content presentation */
   line-height: 1.75;
@@ -2580,11 +2711,11 @@ function greetUser(name) {
 
             </section>
             <section class="content-section" id="customization/styling">
-                <h1>Custom Styling</h1>
+                <h1 id="custom-styling">Custom Styling</h1>
 <p>Advanced styling techniques and customization patterns for creating unique GlowDoc designs that match your brand and requirements.</p>
-<h2>Architecture Overview</h2>
+<h2 id="architecture-overview">Architecture Overview</h2>
 <p>GlowDoc's CSS architecture is designed for maximum customization while maintaining performance and accessibility. Understanding the core structure enables powerful customizations.</p>
-<h3>CSS Organization</h3>
+<h3 id="css-organization">CSS Organization</h3>
 <p>The generated stylesheet follows this structure:</p>
 <pre><code class="language-css">/* 1. CSS Reset &amp; Base Styles */
 /* 2. CSS Custom Properties (Design Tokens) */
@@ -2595,12 +2726,12 @@ function greetUser(name) {
 /* 7. Responsive Media Queries */
 /* 8. Theme Variations */
 </code></pre>
-<h3>Modification Approach</h3>
+<h3 id="modification-approach">Modification Approach</h3>
 <p>Since GlowDoc generates a single HTML file with embedded CSS, customizations should be added to the Rust source in the <code>generate_css()</code> function:</p>
 <p><strong>Location:</strong> <code>src/main.rs</code> - Look for the <code>generate_css()</code> function</p>
-<h2>Advanced Styling Techniques</h2>
-<h3>Custom Brand Integration</h3>
-<h4>Brand Color System</h4>
+<h2 id="advanced-styling-techniques">Advanced Styling Techniques</h2>
+<h3 id="custom-brand-integration">Custom Brand Integration</h3>
+<h4 id="brand-color-system">Brand Color System</h4>
 <p>Create a comprehensive brand color palette:</p>
 <pre><code class="language-css">:root {
   /* Primary brand colors */
@@ -2624,7 +2755,7 @@ function greetUser(name) {
   );
 }
 </code></pre>
-<h4>Logo and Brand Assets</h4>
+<h4 id="logo-and-brand-assets">Logo and Brand Assets</h4>
 <p>Integrate custom logos and brand elements:</p>
 <pre><code class="language-css">.logo {
   background-image: url('data:image/svg+xml;base64,...');
@@ -2643,8 +2774,8 @@ function greetUser(name) {
   color: hsl(var(--brand-primary));
 }
 </code></pre>
-<h3>Advanced Layout Customizations</h3>
-<h4>Multi-Column Content Layout</h4>
+<h3 id="advanced-layout-customizations">Advanced Layout Customizations</h3>
+<h4 id="multi-column-content-layout">Multi-Column Content Layout</h4>
 <p>Create complex content layouts:</p>
 <pre><code class="language-css">.content-section {
   display: grid;
@@ -2677,7 +2808,7 @@ function greetUser(name) {
   }
 }
 </code></pre>
-<h4>Custom Navigation Layouts</h4>
+<h4 id="custom-navigation-layouts">Custom Navigation Layouts</h4>
 <p>Enhanced sidebar with custom sections:</p>
 <pre><code class="language-css">.sidebar {
   display: grid;
@@ -2716,8 +2847,8 @@ function greetUser(name) {
   padding: 0 1rem;
 }
 </code></pre>
-<h3>Typography Enhancement</h3>
-<h4>Custom Font Integration</h4>
+<h3 id="typography-enhancement">Typography Enhancement</h3>
+<h4 id="custom-font-integration">Custom Font Integration</h4>
 <p>Professional typography with web fonts:</p>
 <pre><code class="language-css">/* Import custom fonts */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;family=JetBrains+Mono:wght@400;500;600&amp;display=swap');
@@ -2747,7 +2878,7 @@ code, pre {
   font-family: var(--font-mono);
 }
 </code></pre>
-<h4>Advanced Typography Styles</h4>
+<h4 id="advanced-typography-styles">Advanced Typography Styles</h4>
 <p>Rich text formatting and hierarchy:</p>
 <pre><code class="language-css">.content-section {
   /* Enhanced reading experience */
@@ -2817,8 +2948,8 @@ code, pre {
   font-weight: 600;
 }
 </code></pre>
-<h3>Interactive Element Enhancements</h3>
-<h4>Advanced Button Styling</h4>
+<h3 id="interactive-element-enhancements">Interactive Element Enhancements</h3>
+<h4 id="advanced-button-styling">Advanced Button Styling</h4>
 <p>Custom button system with multiple variants:</p>
 <pre><code class="language-css">/* Button base styles */
 .btn {
@@ -2881,7 +3012,7 @@ code, pre {
   color: hsl(var(--primary-foreground));
 }
 </code></pre>
-<h4>Enhanced Form Styling</h4>
+<h4 id="enhanced-form-styling">Enhanced Form Styling</h4>
 <p>Professional form controls:</p>
 <pre><code class="language-css">.form-group {
   margin-bottom: 1.5rem;
@@ -2916,8 +3047,8 @@ code, pre {
   color: hsl(var(--muted-foreground));
 }
 </code></pre>
-<h3>Animation and Micro-Interactions</h3>
-<h4>Page Transition Effects</h4>
+<h3 id="animation-and-micro-interactions">Animation and Micro-Interactions</h3>
+<h4 id="page-transition-effects">Page Transition Effects</h4>
 <p>Smooth page transitions:</p>
 <pre><code class="language-css">.content-section {
   opacity: 0;
@@ -2949,7 +3080,7 @@ code, pre {
   }
 }
 </code></pre>
-<h4>Hover Effects and Micro-Interactions</h4>
+<h4 id="hover-effects-and-micro-interactions">Hover Effects and Micro-Interactions</h4>
 <p>Engaging interactive feedback:</p>
 <pre><code class="language-css">/* Card hover effects */
 .card {
@@ -3008,8 +3139,8 @@ code, pre {
   height: 300px;
 }
 </code></pre>
-<h3>Responsive Design Patterns</h3>
-<h4>Advanced Responsive Typography</h4>
+<h3 id="responsive-design-patterns">Responsive Design Patterns</h3>
+<h4 id="advanced-responsive-typography">Advanced Responsive Typography</h4>
 <p>Fluid typography that scales smoothly:</p>
 <pre><code class="language-css">:root {
   /* Fluid typography using clamp() */
@@ -3030,7 +3161,7 @@ h1 { font-size: var(--text-fluid-4xl); }
 h2 { font-size: var(--text-fluid-3xl); }
 h3 { font-size: var(--text-fluid-2xl); }
 </code></pre>
-<h4>Container Queries (Future-Forward)</h4>
+<h4 id="container-queries-future-forward">Container Queries (Future-Forward)</h4>
 <p>Modern responsive design using container queries:</p>
 <pre><code class="language-css">.content-section {
   container-type: inline-size;
@@ -3051,8 +3182,8 @@ h3 { font-size: var(--text-fluid-2xl); }
   }
 }
 </code></pre>
-<h3>Dark Mode Advanced Customizations</h3>
-<h4>Theme-Aware Components</h4>
+<h3 id="dark-mode-advanced-customizations">Dark Mode Advanced Customizations</h3>
+<h4 id="theme-aware-components">Theme-Aware Components</h4>
 <p>Components that adapt intelligently to theme changes:</p>
 <pre><code class="language-css">/* Light theme specific styles */
 [data-theme=&quot;light&quot;] .hero-section {
@@ -3083,8 +3214,8 @@ h3 { font-size: var(--text-fluid-2xl); }
     0 1px 3px rgba(0, 0, 0, 0.2);
 }
 </code></pre>
-<h3>Performance Optimization</h3>
-<h4>Efficient CSS Architecture</h4>
+<h3 id="performance-optimization">Performance Optimization</h3>
+<h4 id="efficient-css-architecture">Efficient CSS Architecture</h4>
 <p>Optimized styles for better performance:</p>
 <pre><code class="language-css">/* Use CSS custom properties for frequently changing values */
 :root {
@@ -3104,7 +3235,7 @@ h3 { font-size: var(--text-fluid-2xl); }
 nav &gt; ul &gt; li &gt; a { /* Avoid: deep nesting */ }
 * { /* Avoid: universal selector */ }
 </code></pre>
-<h4>Critical CSS Patterns</h4>
+<h4 id="critical-css-patterns">Critical CSS Patterns</h4>
 <p>Inline critical styles for immediate rendering:</p>
 <pre><code class="language-css">/* Critical above-the-fold styles */
 .layout,
@@ -3122,8 +3253,8 @@ nav &gt; ul &gt; li &gt; a { /* Avoid: deep nesting */ }
   /* Complex animations and decorative styles */
 }
 </code></pre>
-<h2>Custom Styling Workflow</h2>
-<h3>1. Planning Your Customizations</h3>
+<h2 id="custom-styling-workflow">Custom Styling Workflow</h2>
+<h3 id="1-planning-your-customizations">1. Planning Your Customizations</h3>
 <p>Before modifying styles:</p>
 <ol>
 <li><strong>Audit existing styles</strong>: Understand the current CSS architecture</li>
@@ -3131,7 +3262,7 @@ nav &gt; ul &gt; li &gt; a { /* Avoid: deep nesting */ }
 <li><strong>Plan responsive behavior</strong>: Mobile-first approach</li>
 <li><strong>Consider accessibility</strong>: Maintain contrast ratios and focus states</li>
 </ol>
-<h3>2. Implementation Strategy</h3>
+<h3 id="2-implementation-strategy">2. Implementation Strategy</h3>
 <p><strong>Recommended approach:</strong></p>
 <ol>
 <li>Start with CSS custom property overrides</li>
@@ -3140,7 +3271,7 @@ nav &gt; ul &gt; li &gt; a { /* Avoid: deep nesting */ }
 <li>Test across themes (light/dark)</li>
 <li>Validate accessibility compliance</li>
 </ol>
-<h3>3. Testing Checklist</h3>
+<h3 id="3-testing-checklist">3. Testing Checklist</h3>
 <ul>
 <li><input disabled="" type="checkbox"/>
 All themes (default, purple, vibrant)</li>
@@ -3155,7 +3286,7 @@ Screen reader compatibility</li>
 <li><input disabled="" type="checkbox"/>
 Performance impact</li>
 </ul>
-<h2>Troubleshooting Custom Styles</h2>
+<h2 id="troubleshooting-custom-styles">Troubleshooting Custom Styles</h2>
 <p><strong>Styles not applying</strong>: Check CSS specificity and ensure your styles come after the base styles in the build order.</p>
 <p><strong>Theme conflicts</strong>: Verify that custom styles work with both light and dark modes.</p>
 <p><strong>Performance issues</strong>: Minimize complex selectors and excessive animations.</p>
@@ -3164,11 +3295,11 @@ Performance impact</li>
 
             </section>
             <section class="content-section" id="advanced/api">
-                <h1>API Reference</h1>
+                <h1 id="api-reference">API Reference</h1>
 <p>Comprehensive JavaScript API reference for programmatic control and customization of GlowDoc documentation sites.</p>
-<h2>Overview</h2>
+<h2 id="overview">Overview</h2>
 <p>GlowDoc generates a single-page application with a rich JavaScript API for navigation, search, theming, and customization. All functionality is embedded within the generated HTML file, providing a complete client-side documentation experience.</p>
-<h2>Core Navigation API</h2>
+<h2 id="core-navigation-api">Core Navigation API</h2>
 <h3><code>showContent(contentId, updateUrl = true)</code></h3>
 <p>Displays a specific documentation page by content ID.</p>
 <p><strong>Parameters:</strong></p>
@@ -3229,7 +3360,7 @@ showContentFromSearch('quick-start');
 <li>Hides search results, shows navigation</li>
 <li>Calls <code>showContent()</code> to display the selected page</li>
 </ul>
-<h2>Theme Management API</h2>
+<h2 id="theme-management-api">Theme Management API</h2>
 <h3><code>toggleTheme()</code></h3>
 <p>Toggles between light and dark theme modes.</p>
 <p><strong>Parameters:</strong> None<br />
@@ -3253,7 +3384,7 @@ console.log('Current theme:', currentTheme); // 'light' or 'dark'
 <pre><code class="language-javascript">// Theme is automatically saved to localStorage
 localStorage.getItem('theme'); // Returns 'light' or 'dark'
 </code></pre>
-<h2>Navigation and Sidebar API</h2>
+<h2 id="navigation-and-sidebar-api">Navigation and Sidebar API</h2>
 <h3><code>toggleSidebar()</code></h3>
 <p>Toggles sidebar visibility (primarily for mobile interfaces).</p>
 <p><strong>Parameters:</strong> None<br />
@@ -3293,7 +3424,7 @@ const isCollapsed = section.classList.contains('collapsed');
 <li>Provides smooth expand/collapse animations</li>
 <li>State persisted for user experience</li>
 </ul>
-<h2>Search API</h2>
+<h2 id="search-api">Search API</h2>
 <h3><code>performSearch()</code></h3>
 <p>Performs real-time search across all documentation content.</p>
 <p><strong>Parameters:</strong> None (reads from search input element)<br />
@@ -3324,7 +3455,7 @@ const searchIndex = {
   // ... more pages
 };
 </code></pre>
-<h3>Custom Search Integration</h3>
+<h3 id="custom-search-integration">Custom Search Integration</h3>
 <pre><code class="language-javascript">// Access search index for custom functionality
 function customSearch(query) {
   const results = [];
@@ -3343,7 +3474,7 @@ function findBySection(sectionName) {
     .map(([id, data]) =&gt; ({ id, ...data }));
 }
 </code></pre>
-<h2>URL and History Management</h2>
+<h2 id="url-and-history-management">URL and History Management</h2>
 <h3><code>loadFromUrl()</code></h3>
 <p>Loads appropriate content based on current URL hash.</p>
 <p><strong>Parameters:</strong> None<br />
@@ -3372,8 +3503,8 @@ window.addEventListener('popstate', (event) =&gt; {
   }
 });
 </code></pre>
-<h2>Event System</h2>
-<h3>Built-in Event Listeners</h3>
+<h2 id="event-system">Event System</h2>
+<h3 id="built-in-event-listeners">Built-in Event Listeners</h3>
 <p>GlowDoc automatically registers several event listeners:</p>
 <pre><code class="language-javascript">// Navigation clicks
 document.addEventListener('click', (e) =&gt; {
@@ -3398,7 +3529,7 @@ document.addEventListener('click', (e) =&gt; {
   // Close sidebar when clicking outside on mobile
 });
 </code></pre>
-<h3>Custom Event Handling</h3>
+<h3 id="custom-event-handling">Custom Event Handling</h3>
 <pre><code class="language-javascript">// Listen for content changes
 function onContentChange(contentId) {
   console.log('Content changed to:', contentId);
@@ -3412,8 +3543,8 @@ showContent = function(contentId, updateUrl = true) {
   return originalShowContent(contentId, updateUrl);
 };
 </code></pre>
-<h2>Configuration and Customization</h2>
-<h3>Global Configuration</h3>
+<h2 id="configuration-and-customization">Configuration and Customization</h2>
+<h3 id="global-configuration">Global Configuration</h3>
 <pre><code class="language-javascript">// Access current state
 const getCurrentContent = () =&gt; {
   const activeSection = document.querySelector('.content-section:not([style*=&quot;display: none&quot;])');
@@ -3431,7 +3562,7 @@ const getNavigationState = () =&gt; {
   return { collapsedSections };
 };
 </code></pre>
-<h3>DOM Element Access</h3>
+<h3 id="dom-element-access">DOM Element Access</h3>
 <p><strong>Required Elements:</strong></p>
 <pre><code class="language-javascript">// Core layout elements
 const homepage = document.getElementById('homepage');
@@ -3454,8 +3585,8 @@ const navLinks = document.querySelectorAll('.nav-link');
 <li><code>data-section</code>: Identifies collapsible navigation sections</li>
 <li><code>data-theme</code>: Current theme state on document element</li>
 </ul>
-<h2>Advanced Customization</h2>
-<h3>Custom Navigation</h3>
+<h2 id="advanced-customization">Advanced Customization</h2>
+<h3 id="custom-navigation">Custom Navigation</h3>
 <pre><code class="language-javascript">// Add custom navigation item
 function addCustomNavItem(sectionId, title, contentId) {
   const navSection = document.querySelector(`[data-section=&quot;${sectionId}&quot;] .nav-section-content`);
@@ -3487,7 +3618,7 @@ function addCustomContent(contentId, title, htmlContent) {
   };
 }
 </code></pre>
-<h3>Theme Customization</h3>
+<h3 id="theme-customization">Theme Customization</h3>
 <pre><code class="language-javascript">// Custom theme switching
 function setCustomTheme(themeName) {
   document.documentElement.setAttribute('data-theme', themeName);
@@ -3510,7 +3641,7 @@ observer.observe(document.documentElement, {
   attributeFilter: ['data-theme']
 });
 </code></pre>
-<h3>Search Customization</h3>
+<h3 id="search-customization">Search Customization</h3>
 <pre><code class="language-javascript">// Custom search implementation
 function customPerformSearch() {
   const query = document.querySelector('.search-input').value.toLowerCase().trim();
@@ -3593,8 +3724,8 @@ function highlightText(text, query) {
   return text.replace(regex, '&lt;mark class=&quot;search-highlight&quot;&gt;$1&lt;/mark&gt;');
 }
 </code></pre>
-<h2>Performance and Optimization</h2>
-<h3>Debounced Search</h3>
+<h2 id="performance-and-optimization">Performance and Optimization</h2>
+<h3 id="debounced-search">Debounced Search</h3>
 <pre><code class="language-javascript">// Implement search debouncing
 let searchTimeout;
 function debouncedSearch() {
@@ -3605,7 +3736,7 @@ function debouncedSearch() {
 // Replace default search input handler
 document.querySelector('.search-input').addEventListener('input', debouncedSearch);
 </code></pre>
-<h3>Lazy Loading</h3>
+<h3 id="lazy-loading">Lazy Loading</h3>
 <pre><code class="language-javascript">// Lazy load content sections
 const observerOptions = {
   root: null,
@@ -3627,8 +3758,8 @@ document.querySelectorAll('.content-section').forEach(section =&gt; {
   contentObserver.observe(section);
 });
 </code></pre>
-<h2>Error Handling and Debugging</h2>
-<h3>Debug Mode</h3>
+<h2 id="error-handling-and-debugging">Error Handling and Debugging</h2>
+<h3 id="debug-mode">Debug Mode</h3>
 <pre><code class="language-javascript">// Enable debug mode
 window.GLOWDOC_DEBUG = true;
 
@@ -3649,7 +3780,7 @@ function debugShowContent(contentId, updateUrl = true) {
   return showContent(contentId, updateUrl);
 }
 </code></pre>
-<h3>Error Recovery</h3>
+<h3 id="error-recovery">Error Recovery</h3>
 <pre><code class="language-javascript">// Handle missing content gracefully
 function safeShowContent(contentId, fallbackId = 'introduction') {
   const contentElement = document.getElementById(contentId);
@@ -3684,7 +3815,7 @@ function validateNavigation() {
   return issues;
 }
 </code></pre>
-<h2>Browser Compatibility</h2>
+<h2 id="browser-compatibility">Browser Compatibility</h2>
 <p><strong>Supported Features:</strong></p>
 <ul>
 <li>ES6+ JavaScript (const, let, arrow functions, template literals)</li>
@@ -3716,9 +3847,9 @@ if (!window.localStorage) {
 
             </section>
             <section class="content-section" id="advanced/deployment">
-                <h1>Deployment</h1>
+                <h1 id="deployment">Deployment</h1>
 <p>Comprehensive guide to deploying your GlowDoc documentation site across various hosting platforms, from simple static hosting to advanced CI/CD pipelines.</p>
-<h2>Overview</h2>
+<h2 id="overview">Overview</h2>
 <p>GlowDoc generates a single <code>index.html</code> file containing your entire documentation site, making deployment simple and flexible. This approach offers several advantages:</p>
 <ul>
 <li><strong>Single File Deployment</strong>: No complex directory structures or dependencies</li>
@@ -3727,9 +3858,9 @@ if (!window.localStorage) {
 <li><strong>Easy Backup</strong>: Single file contains everything</li>
 <li><strong>CDN Friendly</strong>: Perfect for content delivery networks</li>
 </ul>
-<h2>Pre-Deployment Checklist</h2>
+<h2 id="pre-deployment-checklist">Pre-Deployment Checklist</h2>
 <p>Before deploying your documentation:</p>
-<h3>1. Build Verification</h3>
+<h3 id="1-build-verification">1. Build Verification</h3>
 <pre><code class="language-bash"># Build your documentation
 cargo run --release
 
@@ -3740,7 +3871,7 @@ ls -la index.html
 python3 -m http.server 8000
 # Visit http://localhost:8000 to verify everything works
 </code></pre>
-<h3>2. Content Review</h3>
+<h3 id="2-content-review">2. Content Review</h3>
 <ul>
 <li><input disabled="" type="checkbox"/>
 All pages load correctly</li>
@@ -3755,17 +3886,17 @@ Mobile responsive design works</li>
 <li><input disabled="" type="checkbox"/>
 All links are functional</li>
 </ul>
-<h3>3. Performance Optimization</h3>
+<h3 id="3-performance-optimization">3. Performance Optimization</h3>
 <pre><code class="language-bash"># Check file size (typical range: 500KB - 2MB)
 du -h index.html
 
 # Optional: Minify if needed (for very large sites)
 # Note: GlowDoc output is already optimized
 </code></pre>
-<h2>Static Hosting Platforms</h2>
-<h3>GitHub Pages</h3>
+<h2 id="static-hosting-platforms">Static Hosting Platforms</h2>
+<h3 id="github-pages">GitHub Pages</h3>
 <p>Deploy directly from your GitHub repository with automated builds.</p>
-<h4>Method 1: GitHub Actions (Recommended)</h4>
+<h4 id="method-1-github-actions-recommended">Method 1: GitHub Actions (Recommended)</h4>
 <p>Create <code>.github/workflows/deploy.yml</code>:</p>
 <pre><code class="language-yaml">name: Deploy GlowDoc
 
@@ -3816,7 +3947,7 @@ jobs:
           target
           README.md
 </code></pre>
-<h4>Method 2: Manual Upload</h4>
+<h4 id="method-2-manual-upload">Method 2: Manual Upload</h4>
 <pre><code class="language-bash"># Build locally
 cargo run --release
 
@@ -3830,7 +3961,7 @@ git push origin gh-pages
 # Return to main branch
 git checkout main
 </code></pre>
-<h4>GitHub Pages Configuration</h4>
+<h4 id="github-pages-configuration">GitHub Pages Configuration</h4>
 <ol>
 <li>Go to your repository → Settings → Pages</li>
 <li>Set Source to &quot;Deploy from a branch&quot;</li>
@@ -3845,9 +3976,9 @@ git add CNAME
 git commit -m &quot;Add custom domain&quot;
 git push
 </code></pre>
-<h3>Netlify</h3>
+<h3 id="netlify">Netlify</h3>
 <p>Professional hosting with advanced features and global CDN.</p>
-<h4>Method 1: Git Integration (Recommended)</h4>
+<h4 id="method-1-git-integration-recommended">Method 1: Git Integration (Recommended)</h4>
 <ol>
 <li>
 <p><strong>Connect Repository:</strong></p>
@@ -3890,7 +4021,7 @@ git push
 </ul>
 </li>
 </ol>
-<h4>Method 2: Manual Upload</h4>
+<h4 id="method-2-manual-upload">Method 2: Manual Upload</h4>
 <pre><code class="language-bash"># Build documentation
 cargo run --release
 
@@ -3899,7 +4030,7 @@ npm install -g netlify-cli
 netlify login
 netlify deploy --prod --dir=.
 </code></pre>
-<h4>Advanced Netlify Features</h4>
+<h4 id="advanced-netlify-features">Advanced Netlify Features</h4>
 <p><strong>Form Handling:</strong></p>
 <pre><code class="language-html">&lt;!-- Add to your documentation for feedback forms --&gt;
 &lt;form name=&quot;feedback&quot; method=&quot;POST&quot; data-netlify=&quot;true&quot;&gt;
@@ -3921,9 +4052,9 @@ if (window.netlifyIdentity) {
   });
 }
 </code></pre>
-<h3>Vercel</h3>
+<h3 id="vercel">Vercel</h3>
 <p>Zero-configuration deployment with excellent performance.</p>
-<h4>Method 1: Git Integration</h4>
+<h4 id="method-1-git-integration">Method 1: Git Integration</h4>
 <ol>
 <li>
 <p><strong>Connect Repository:</strong></p>
@@ -3967,7 +4098,7 @@ if (window.netlifyIdentity) {
 </code></pre>
 </li>
 </ol>
-<h4>Method 2: Vercel CLI</h4>
+<h4 id="method-2-vercel-cli">Method 2: Vercel CLI</h4>
 <pre><code class="language-bash"># Install Vercel CLI
 npm install -g vercel
 
@@ -3975,9 +4106,9 @@ npm install -g vercel
 cargo run --release
 vercel --prod
 </code></pre>
-<h3>Cloudflare Pages</h3>
+<h3 id="cloudflare-pages">Cloudflare Pages</h3>
 <p>High-performance hosting with global edge network.</p>
-<h4>Setup Process:</h4>
+<h4 id="setup-process">Setup Process:</h4>
 <ol>
 <li>
 <p><strong>Connect Repository:</strong></p>
@@ -4001,9 +4132,9 @@ vercel --prod
 </code></pre>
 </li>
 </ol>
-<h3>Firebase Hosting</h3>
+<h3 id="firebase-hosting">Firebase Hosting</h3>
 <p>Google's hosting platform with global CDN.</p>
-<h4>Setup Process:</h4>
+<h4 id="setup-process">Setup Process:</h4>
 <pre><code class="language-bash"># Install Firebase CLI
 npm install -g firebase-tools
 
@@ -4048,8 +4179,8 @@ firebase init hosting
 cargo run --release
 firebase deploy
 </code></pre>
-<h2>Traditional Web Hosting</h2>
-<h3>Apache Configuration</h3>
+<h2 id="traditional-web-hosting">Traditional Web Hosting</h2>
+<h3 id="apache-configuration">Apache Configuration</h3>
 <p>For traditional web hosting with Apache:</p>
 <pre><code class="language-apache"># .htaccess
 RewriteEngine On
@@ -4078,7 +4209,7 @@ Header always set Strict-Transport-Security &quot;max-age=31536000; includeSubDo
     ExpiresByType application/javascript &quot;access plus 1 year&quot;
 &lt;/IfModule&gt;
 </code></pre>
-<h3>Nginx Configuration</h3>
+<h3 id="nginx-configuration">Nginx Configuration</h3>
 <p>For Nginx hosting:</p>
 <pre><code class="language-nginx">server {
     listen 80;
@@ -4124,8 +4255,8 @@ server {
     }
 }
 </code></pre>
-<h2>Content Delivery Networks (CDN)</h2>
-<h3>Cloudflare CDN</h3>
+<h2 id="content-delivery-networks-cdn">Content Delivery Networks (CDN)</h2>
+<h3 id="cloudflare-cdn">Cloudflare CDN</h3>
 <p>Enhance performance with Cloudflare:</p>
 <ol>
 <li>
@@ -4154,7 +4285,7 @@ server {
 </code></pre>
 </li>
 </ol>
-<h3>AWS CloudFront</h3>
+<h3 id="aws-cloudfront">AWS CloudFront</h3>
 <p>Enterprise-grade CDN with AWS integration:</p>
 <pre><code class="language-json">{
   &quot;Distribution&quot;: {
@@ -4183,8 +4314,8 @@ server {
   }
 }
 </code></pre>
-<h2>Automation and CI/CD</h2>
-<h3>GitHub Actions Advanced Workflow</h3>
+<h2 id="automation-and-ci-cd">Automation and CI/CD</h2>
+<h3 id="github-actions-advanced-workflow">GitHub Actions Advanced Workflow</h3>
 <p>Complete CI/CD pipeline with testing and deployment:</p>
 <pre><code class="language-yaml">name: Build, Test, and Deploy
 
@@ -4294,7 +4425,7 @@ jobs:
           -H 'Content-type: application/json' \
           --data '{&quot;text&quot;:&quot;📚 Documentation deployed successfully!&quot;}'
 </code></pre>
-<h3>GitLab CI/CD</h3>
+<h3 id="gitlab-ci-cd">GitLab CI/CD</h3>
 <pre><code class="language-yaml"># .gitlab-ci.yml
 stages:
   - test
@@ -4341,9 +4472,9 @@ pages:
   only:
     - main
 </code></pre>
-<h2>Domain and SSL Configuration</h2>
-<h3>Custom Domain Setup</h3>
-<h4>DNS Configuration:</h4>
+<h2 id="domain-and-ssl-configuration">Domain and SSL Configuration</h2>
+<h3 id="custom-domain-setup">Custom Domain Setup</h3>
+<h4 id="dns-configuration">DNS Configuration:</h4>
 <pre><code># A Records for root domain
 @ 3600 IN A 185.199.108.153
 @ 3600 IN A 185.199.109.153
@@ -4356,7 +4487,7 @@ www 3600 IN CNAME your-username.github.io.
 # CNAME for docs subdomain
 docs 3600 IN CNAME your-site.netlify.app.
 </code></pre>
-<h4>SSL Certificate Setup:</h4>
+<h4 id="ssl-certificate-setup">SSL Certificate Setup:</h4>
 <p>Most modern hosting platforms provide automatic SSL:</p>
 <ul>
 <li><strong>GitHub Pages</strong>: Automatic with custom domains</li>
@@ -4364,7 +4495,7 @@ docs 3600 IN CNAME your-site.netlify.app.
 <li><strong>Vercel</strong>: Automatic SSL for all deployments</li>
 <li><strong>Cloudflare</strong>: Universal SSL included</li>
 </ul>
-<h3>Manual SSL Configuration</h3>
+<h3 id="manual-ssl-configuration">Manual SSL Configuration</h3>
 <p>For traditional hosting:</p>
 <pre><code class="language-bash"># Generate Let's Encrypt certificate
 certbot certonly --webroot -w /var/www/glowdoc -d yourdomain.com
@@ -4372,22 +4503,22 @@ certbot certonly --webroot -w /var/www/glowdoc -d yourdomain.com
 # Auto-renewal
 echo &quot;0 12 * * * /usr/bin/certbot renew --quiet&quot; | crontab -
 </code></pre>
-<h2>Performance Optimization</h2>
-<h3>Build Optimization</h3>
+<h2 id="performance-optimization">Performance Optimization</h2>
+<h3 id="build-optimization">Build Optimization</h3>
 <pre><code class="language-bash"># Optimize for production
 RUSTFLAGS=&quot;-C target-cpu=native&quot; cargo run --release
 
 # Profile build performance
 cargo build --release --timings
 </code></pre>
-<h3>Content Optimization</h3>
+<h3 id="content-optimization">Content Optimization</h3>
 <ol>
 <li><strong>Image Optimization</strong>: Use optimized images in markdown</li>
 <li><strong>Font Subsetting</strong>: Include only needed font weights</li>
 <li><strong>Code Splitting</strong>: Implement lazy loading for large sections</li>
 </ol>
-<h3>Monitoring and Analytics</h3>
-<h4>Performance Monitoring:</h4>
+<h3 id="monitoring-and-analytics">Monitoring and Analytics</h3>
+<h4 id="performance-monitoring">Performance Monitoring:</h4>
 <pre><code class="language-javascript">// Add to your custom JavaScript
 function trackPerformance() {
   window.addEventListener('load', () =&gt; {
@@ -4402,15 +4533,15 @@ function trackPerformance() {
   });
 }
 </code></pre>
-<h4>Uptime Monitoring:</h4>
+<h4 id="uptime-monitoring">Uptime Monitoring:</h4>
 <p>Set up monitoring with services like:</p>
 <ul>
 <li><strong>StatusCake</strong>: Free uptime monitoring</li>
 <li><strong>Pingdom</strong>: Comprehensive monitoring suite</li>
 <li><strong>UptimeRobot</strong>: Free and paid monitoring options</li>
 </ul>
-<h2>Security Considerations</h2>
-<h3>Content Security Policy</h3>
+<h2 id="security-considerations">Security Considerations</h2>
+<h3 id="content-security-policy">Content Security Policy</h3>
 <pre><code class="language-html">&lt;!-- Add to your HTML head --&gt;
 &lt;meta http-equiv=&quot;Content-Security-Policy&quot; content=&quot;
   default-src 'self';
@@ -4421,7 +4552,7 @@ function trackPerformance() {
   connect-src 'self' https://www.google-analytics.com;
 &quot;&gt;
 </code></pre>
-<h3>Security Headers</h3>
+<h3 id="security-headers">Security Headers</h3>
 <p>Implement security headers across all hosting platforms:</p>
 <pre><code>X-Frame-Options: DENY
 X-Content-Type-Options: nosniff
@@ -4429,8 +4560,8 @@ X-XSS-Protection: 1; mode=block
 Strict-Transport-Security: max-age=31536000; includeSubDomains
 Referrer-Policy: strict-origin-when-cross-origin
 </code></pre>
-<h2>Troubleshooting Deployment Issues</h2>
-<h3>Common Problems</h3>
+<h2 id="troubleshooting-deployment-issues">Troubleshooting Deployment Issues</h2>
+<h3 id="common-problems">Common Problems</h3>
 <p><strong>Build Failures:</strong></p>
 <pre><code class="language-bash"># Check Rust version compatibility
 rustc --version
@@ -4459,7 +4590,7 @@ cargo clean &amp;&amp; cargo run --release
 <li>Check certificate chain</li>
 <li>Ensure HTTPS redirects are configured</li>
 </ul>
-<h3>Debug Deployment</h3>
+<h3 id="debug-deployment">Debug Deployment</h3>
 <pre><code class="language-bash"># Test local build
 cargo run --release
 python3 -m http.server 8000
@@ -4473,7 +4604,7 @@ ls -la index.html
 # Test from different networks
 curl -I https://yourdomain.com
 </code></pre>
-<h2>Best Practices</h2>
+<h2 id="best-practices">Best Practices</h2>
 <ol>
 <li><strong>Version Control</strong>: Always commit before deploying</li>
 <li><strong>Staging Environment</strong>: Test changes before production</li>
@@ -4487,21 +4618,21 @@ curl -I https://yourdomain.com
 
             </section>
             <section class="content-section" id="advanced/plugins">
-                <h1>Plugins and Extensions</h1>
+                <h1 id="plugins-and-extensions">Plugins and Extensions</h1>
 <p>Extend GlowDoc's functionality with custom plugins, third-party integrations, and advanced features to enhance your documentation experience.</p>
-<h2>Plugin Architecture Overview</h2>
+<h2 id="plugin-architecture-overview">Plugin Architecture Overview</h2>
 <p>GlowDoc's modular architecture allows for various extension points and integration patterns. While GlowDoc doesn't have a formal plugin system, you can extend functionality through several approaches:</p>
-<h3>Extension Methods</h3>
+<h3 id="extension-methods">Extension Methods</h3>
 <ol>
 <li><strong>CSS and JavaScript Extensions</strong>: Add custom functionality through the Rust build process</li>
 <li><strong>Third-Party Integrations</strong>: Embed external services and tools</li>
 <li><strong>Build Process Extensions</strong>: Modify the Rust source for custom features</li>
 <li><strong>External Tool Integration</strong>: Combine GlowDoc with other documentation tools</li>
 </ol>
-<h2>Syntax Highlighting Enhancements</h2>
-<h3>Advanced Code Highlighting</h3>
+<h2 id="syntax-highlighting-enhancements">Syntax Highlighting Enhancements</h2>
+<h3 id="advanced-code-highlighting">Advanced Code Highlighting</h3>
 <p>While GlowDoc includes basic syntax highlighting, you can enhance it with external libraries:</p>
-<h4>Prism.js Integration</h4>
+<h4 id="prism-js-integration">Prism.js Integration</h4>
 <p>Add advanced syntax highlighting with Prism.js:</p>
 <pre><code class="language-javascript">// Add to the JavaScript section in src/main.rs
 function initializePrism() {
@@ -4532,7 +4663,7 @@ function initializePrism() {
 // Call during page initialization
 initializePrism();
 </code></pre>
-<h4>Custom Syntax Highlighting</h4>
+<h4 id="custom-syntax-highlighting">Custom Syntax Highlighting</h4>
 <p>Create custom highlighting for domain-specific languages:</p>
 <pre><code class="language-javascript">function customHighlighter() {
   document.querySelectorAll('pre code').forEach(block =&gt; {
@@ -4561,7 +4692,7 @@ function highlightCustomDSL(codeBlock) {
   codeBlock.innerHTML = html;
 }
 </code></pre>
-<h3>Code Copy Functionality</h3>
+<h3 id="code-copy-functionality">Code Copy Functionality</h3>
 <p>Add copy-to-clipboard buttons for code blocks:</p>
 <pre><code class="language-javascript">function addCopyButtons() {
   document.querySelectorAll('pre').forEach(pre =&gt; {
@@ -4614,9 +4745,9 @@ pre:hover .copy-button {
 }
 `;
 </code></pre>
-<h2>Search Enhancements</h2>
-<h3>Advanced Search Integration</h3>
-<h4>Algolia DocSearch</h4>
+<h2 id="search-enhancements">Search Enhancements</h2>
+<h3 id="advanced-search-integration">Advanced Search Integration</h3>
+<h4 id="algolia-docsearch">Algolia DocSearch</h4>
 <p>Integrate Algolia's DocSearch for powerful search capabilities:</p>
 <pre><code class="language-javascript">function initializeAlgoliaSearch() {
   // Load Algolia DocSearch
@@ -4640,7 +4771,7 @@ pre:hover .copy-button {
   searchContainer.innerHTML = '&lt;div id=&quot;docsearch&quot;&gt;&lt;/div&gt;';
 }
 </code></pre>
-<h4>Lunr.js Client-Side Search</h4>
+<h4 id="lunr-js-client-side-search">Lunr.js Client-Side Search</h4>
 <p>Implement advanced client-side search with Lunr.js:</p>
 <pre><code class="language-javascript">function initializeLunrSearch() {
   // Build search index from content
@@ -4690,7 +4821,7 @@ pre:hover .copy-button {
   }
 }
 </code></pre>
-<h3>Search Analytics</h3>
+<h3 id="search-analytics">Search Analytics</h3>
 <p>Track search behavior and popular queries:</p>
 <pre><code class="language-javascript">function trackSearchAnalytics() {
   const searchInput = document.querySelector('.search-input');
@@ -4729,8 +4860,8 @@ function debounce(func, wait) {
   };
 }
 </code></pre>
-<h2>Analytics and Tracking</h2>
-<h3>Google Analytics 4 Integration</h3>
+<h2 id="analytics-and-tracking">Analytics and Tracking</h2>
+<h3 id="google-analytics-4-integration">Google Analytics 4 Integration</h3>
 <p>Implement comprehensive analytics tracking:</p>
 <pre><code class="language-javascript">function initializeAnalytics() {
   // Load Google Analytics
@@ -4787,7 +4918,7 @@ function trackUserBehavior() {
   }, 500));
 }
 </code></pre>
-<h3>Hotjar Integration</h3>
+<h3 id="hotjar-integration">Hotjar Integration</h3>
 <p>Add user behavior tracking with Hotjar:</p>
 <pre><code class="language-javascript">function initializeHotjar() {
   const script = document.createElement('script');
@@ -4804,8 +4935,8 @@ function trackUserBehavior() {
   document.head.appendChild(script);
 }
 </code></pre>
-<h2>Accessibility Enhancements</h2>
-<h3>Screen Reader Improvements</h3>
+<h2 id="accessibility-enhancements">Accessibility Enhancements</h2>
+<h3 id="screen-reader-improvements">Screen Reader Improvements</h3>
 <p>Enhance accessibility with ARIA attributes and screen reader support:</p>
 <pre><code class="language-javascript">function enhanceAccessibility() {
   // Add skip navigation
@@ -4875,7 +5006,7 @@ const accessibilityCSS = `
 }
 `;
 </code></pre>
-<h3>Keyboard Navigation Enhancement</h3>
+<h3 id="keyboard-navigation-enhancement">Keyboard Navigation Enhancement</h3>
 <p>Improve keyboard navigation throughout the documentation:</p>
 <pre><code class="language-javascript">function enhanceKeyboardNavigation() {
   let focusedSearchResult = -1;
@@ -4939,8 +5070,8 @@ const accessibilityCSS = `
   }
 }
 </code></pre>
-<h2>Performance Enhancements</h2>
-<h3>Lazy Loading and Code Splitting</h3>
+<h2 id="performance-enhancements">Performance Enhancements</h2>
+<h3 id="lazy-loading-and-code-splitting">Lazy Loading and Code Splitting</h3>
 <p>Implement performance optimizations:</p>
 <pre><code class="language-javascript">function implementLazyLoading() {
   // Lazy load heavy components
@@ -5018,8 +5149,8 @@ function implementServiceWorker() {
   }
 }
 </code></pre>
-<h2>Diagram and Visualization Support</h2>
-<h3>Mermaid Diagrams</h3>
+<h2 id="diagram-and-visualization-support">Diagram and Visualization Support</h2>
+<h3 id="mermaid-diagrams">Mermaid Diagrams</h3>
 <p>Add support for Mermaid diagrams:</p>
 <pre><code class="language-javascript">function initializeMermaid() {
   const script = document.createElement('script');
@@ -5073,7 +5204,7 @@ function updateMermaidTheme() {
   });
 }
 </code></pre>
-<h3>Chart.js Integration</h3>
+<h3 id="chart-js-integration">Chart.js Integration</h3>
 <p>Add interactive charts and graphs:</p>
 <pre><code class="language-javascript">function initializeCharts() {
   const script = document.createElement('script');
@@ -5106,8 +5237,8 @@ function updateMermaidTheme() {
   document.head.appendChild(script);
 }
 </code></pre>
-<h2>Plugin Development Guide</h2>
-<h3>Creating Custom Extensions</h3>
+<h2 id="plugin-development-guide">Plugin Development Guide</h2>
+<h3 id="creating-custom-extensions">Creating Custom Extensions</h3>
 <p>Structure for building your own GlowDoc extensions:</p>
 <pre><code class="language-rust">// In src/main.rs, add to the generate_javascript() function
 
@@ -5199,7 +5330,7 @@ pub fn generate_custom_plugin_javascript() -&gt; String {
     &quot;#.to_string()
 }
 </code></pre>
-<h3>Plugin Configuration</h3>
+<h3 id="plugin-configuration">Plugin Configuration</h3>
 <p>Allow users to configure plugins through config.yaml:</p>
 <pre><code class="language-rust">// Add to Config struct in src/main.rs
 #[derive(Debug, Deserialize, Serialize)]
@@ -5218,29 +5349,29 @@ struct Config {
     plugins: Option&lt;Vec&lt;PluginConfig&gt;&gt;,
 }
 </code></pre>
-<h2>Best Practices for Extensions</h2>
-<h3>Performance Considerations</h3>
+<h2 id="best-practices-for-extensions">Best Practices for Extensions</h2>
+<h3 id="performance-considerations">Performance Considerations</h3>
 <ol>
 <li><strong>Lazy Loading</strong>: Only load plugins when needed</li>
 <li><strong>Code Splitting</strong>: Separate plugin code from core functionality</li>
 <li><strong>Memory Management</strong>: Clean up event listeners and resources</li>
 <li><strong>Minimal Dependencies</strong>: Keep external dependencies lightweight</li>
 </ol>
-<h3>Security Guidelines</h3>
+<h3 id="security-guidelines">Security Guidelines</h3>
 <ol>
 <li><strong>Input Validation</strong>: Sanitize all user inputs</li>
 <li><strong>Content Security Policy</strong>: Implement CSP headers</li>
 <li><strong>External Resources</strong>: Use integrity hashes for CDN resources</li>
 <li><strong>User Data</strong>: Handle user data securely</li>
 </ol>
-<h3>Accessibility Standards</h3>
+<h3 id="accessibility-standards">Accessibility Standards</h3>
 <ol>
 <li><strong>ARIA Support</strong>: Provide proper ARIA attributes</li>
 <li><strong>Keyboard Navigation</strong>: Ensure all functionality is keyboard accessible</li>
 <li><strong>Screen Reader Compatibility</strong>: Test with screen readers</li>
 <li><strong>Color Contrast</strong>: Maintain adequate contrast ratios</li>
 </ol>
-<h2>Troubleshooting Plugins</h2>
+<h2 id="troubleshooting-plugins">Troubleshooting Plugins</h2>
 <p><strong>Plugin not loading</strong>: Check browser console for JavaScript errors and verify script URLs.</p>
 <p><strong>Conflicts between plugins</strong>: Implement proper namespacing and avoid global variable conflicts.</p>
 <p><strong>Performance issues</strong>: Profile plugin performance and optimize heavy operations.</p>
@@ -5248,6 +5379,16 @@ struct Config {
 <p><strong>Mobile responsiveness</strong>: Test plugin functionality on mobile devices.</p>
 
             </section>
+                </div>
+                <aside class="table-of-contents" id="table-of-contents">
+                    <div class="toc-header">
+                        <h3>On this page</h3>
+                    </div>
+                    <nav class="toc-nav" id="toc-nav">
+                        <!-- Table of contents will be populated by JavaScript -->
+                    </nav>
+                </aside>
+            </div>
         </main>
     </div>
 
@@ -5351,6 +5492,9 @@ const searchIndex = {
             document.getElementById('homepage').classList.add('active');
             document.getElementById('docs-layout').classList.remove('active');
             
+            // Clear table of contents when showing homepage
+            clearTableOfContents();
+            
             // Update URL to homepage
             history.pushState({ page: 'homepage' }, '', window.location.pathname);
         }
@@ -5360,8 +5504,8 @@ const searchIndex = {
             document.getElementById('docs-layout').classList.add('active');
         }
 
-        function showContent(contentId, updateUrl = true) {
-            console.log('showContent called with contentId:', contentId);
+        function showContent(contentId, updateUrl = true, headerId = null) {
+            console.log('showContent called with contentId:', contentId, 'headerId:', headerId);
             
             // Switch to docs view first
             showDocs();
@@ -5380,16 +5524,37 @@ const searchIndex = {
                 targetContent.classList.add('active');
                 console.log('Successfully activated content:', contentId);
                 
+                // Generate table of contents for this page
+                generateTableOfContents(targetContent);
+                
+                // Scroll to header if specified
+                if (headerId) {
+                    setTimeout(() => {
+                        const headerElement = document.getElementById(headerId);
+                        if (headerElement) {
+                            headerElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                            updateTocActiveState(headerId);
+                        }
+                    }, 100);
+                } else {
+                    // Update TOC active state based on scroll position
+                    updateTocActiveState();
+                }
+                
                 // Update URL if requested
                 if (updateUrl) {
-                    const newUrl = window.location.pathname + '#' + contentId;
-                    history.pushState({ contentId: contentId }, '', newUrl);
+                    const newUrl = headerId ? 
+                        window.location.pathname + '#' + contentId + '#' + headerId :
+                        window.location.pathname + '#' + contentId;
+                    history.pushState({ contentId: contentId, headerId: headerId }, '', newUrl);
                 }
             } else {
                 console.error('Content not found for ID:', contentId);
                 // List all available content sections for debugging
                 const allContentIds = Array.from(allSections).map(s => s.id);
                 console.log('Available content IDs:', allContentIds);
+                // Clear TOC if no content found
+                clearTableOfContents();
             }
             
             // Update active nav link
@@ -5411,6 +5576,147 @@ const searchIndex = {
                 document.getElementById('sidebar').classList.remove('visible');
             }
             
+        }
+
+        function generateTableOfContents(contentElement) {
+            const tocNav = document.getElementById('toc-nav');
+            const tocContainer = document.getElementById('table-of-contents');
+            
+            if (!contentElement) {
+                clearTableOfContents();
+                return;
+            }
+            
+            // Find all headers in the content
+            const headers = contentElement.querySelectorAll('h1, h2, h3, h4, h5, h6');
+            
+            if (headers.length === 0) {
+                clearTableOfContents();
+                return;
+            }
+            
+            // Show the TOC container
+            tocContainer.style.display = 'block';
+            
+            // Build the TOC structure
+            let tocHtml = '<ul>';
+            headers.forEach(header => {
+                const level = parseInt(header.tagName.substring(1));
+                const text = header.textContent;
+                const id = header.id;
+                
+                if (id) {
+                    const listItem = document.createElement('li');
+                    listItem.className = 'toc-level-' + level;
+                    
+                    const link = document.createElement('a');
+                    link.href = '#' + id;
+                    link.className = 'toc-link';
+                    link.setAttribute('data-header-id', id);
+                    link.textContent = text;
+                    
+                    listItem.appendChild(link);
+                    tocHtml += listItem.outerHTML;
+                }
+            });
+            tocHtml += '</ul>';
+            
+            tocNav.innerHTML = tocHtml;
+            
+            // Add click handlers for TOC links
+            const tocLinks = tocNav.querySelectorAll('.toc-link');
+            tocLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const headerId = this.getAttribute('data-header-id');
+                    const headerElement = document.getElementById(headerId);
+                    if (headerElement) {
+                        headerElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        updateTocActiveState(headerId);
+                        
+                        // Update URL with header
+                        const currentContent = document.querySelector('.content-section.active');
+                        if (currentContent) {
+                            const contentId = currentContent.id;
+                            const newUrl = window.location.pathname + '#' + contentId + '#' + headerId;
+                            history.pushState({ contentId: contentId, headerId: headerId }, '', newUrl);
+                        }
+                    }
+                });
+            });
+            
+            // Set up scroll spy for TOC
+            setupScrollSpy();
+        }
+
+        function clearTableOfContents() {
+            const tocNav = document.getElementById('toc-nav');
+            const tocContainer = document.getElementById('table-of-contents');
+            
+            if (tocNav) {
+                tocNav.innerHTML = '';
+            }
+            
+            if (tocContainer) {
+                tocContainer.style.display = 'none';
+            }
+        }
+
+        function updateTocActiveState(activeHeaderId) {
+            const tocLinks = document.querySelectorAll('.toc-link');
+            tocLinks.forEach(link => {
+                link.classList.remove('active');
+                if (activeHeaderId && link.getAttribute('data-header-id') === activeHeaderId) {
+                    link.classList.add('active');
+                }
+            });
+        }
+
+        function setupScrollSpy() {
+            const headers = document.querySelectorAll('.content-section.active h1, .content-section.active h2, .content-section.active h3, .content-section.active h4, .content-section.active h5, .content-section.active h6');
+            
+            if (headers.length === 0) return;
+            
+            const observer = new IntersectionObserver((entries) => {
+                let activeHeader = null;
+                
+                // Find the header that's most visible
+                entries.forEach(entry => {
+                    if (entry.isIntersecting && entry.intersectionRatio > 0.5) {
+                        activeHeader = entry.target.id;
+                    }
+                });
+                
+                // If no header is prominently visible, find the one closest to the top
+                if (!activeHeader) {
+                    let closestHeader = null;
+                    let closestDistance = Infinity;
+                    
+                    headers.forEach(header => {
+                        const rect = header.getBoundingClientRect();
+                        const distance = Math.abs(rect.top);
+                        if (distance < closestDistance && rect.top <= window.innerHeight / 2) {
+                            closestDistance = distance;
+                            closestHeader = header.id;
+                        }
+                    });
+                    
+                    activeHeader = closestHeader;
+                }
+                
+                if (activeHeader) {
+                    updateTocActiveState(activeHeader);
+                }
+            }, {
+                rootMargin: '-20% 0px -80% 0px',
+                threshold: [0, 0.25, 0.5, 0.75, 1]
+            });
+            
+            headers.forEach(header => {
+                if (header.id) {
+                    observer.observe(header);
+                }
+            });
         }
 
 
@@ -5494,15 +5800,35 @@ const searchIndex = {
             
             // Display results
             if (results.length === 0) {
-                searchResultsList.innerHTML = '<div class="no-results">No results found</div>';
+                searchResultsList.innerHTML = '<div class=\"no-results\">No results found</div>';
             } else {
-                searchResultsList.innerHTML = results.map(result => `
-                    <div class="search-result" onclick="showContentFromSearch('${result.id}')">
-                        <div class="search-result-title">${result.title}</div>
-                        <div class="search-result-section">${result.section}</div>
-                        ${result.snippet ? `<div class="search-result-snippet">${result.snippet}</div>` : ''}
-                    </div>
-                `).join('');
+                let resultsHtml = '';
+                results.forEach(result => {
+                    const resultDiv = document.createElement('div');
+                    resultDiv.className = 'search-result';
+                    resultDiv.onclick = () => showContentFromSearch(result.id);
+                    
+                    const titleDiv = document.createElement('div');
+                    titleDiv.className = 'search-result-title';
+                    titleDiv.textContent = result.title;
+                    resultDiv.appendChild(titleDiv);
+                    
+                    const sectionDiv = document.createElement('div');
+                    sectionDiv.className = 'search-result-section';
+                    sectionDiv.textContent = result.section;
+                    resultDiv.appendChild(sectionDiv);
+                    
+                    if (result.snippet) {
+                        const snippetDiv = document.createElement('div');
+                        snippetDiv.className = 'search-result-snippet';
+                        snippetDiv.innerHTML = result.snippet;
+                        resultDiv.appendChild(snippetDiv);
+                    }
+                    
+                    resultsHtml += resultDiv.outerHTML;
+                });
+                
+                searchResultsList.innerHTML = resultsHtml;
             }
         }
         
@@ -5534,11 +5860,20 @@ const searchIndex = {
             const hash = window.location.hash.substring(1); // Remove the # symbol
             
             if (hash) {
-                // Check if the content exists with the provided hash
-                if (document.getElementById(hash)) {
-                    // Show the content without updating URL (it's already correct)
-                    showContent(hash, false);
-                    return;
+                // Check if this is a header link (contains two # symbols)
+                const hashParts = hash.split('#');
+                if (hashParts.length === 2) {
+                    const [contentId, headerId] = hashParts;
+                    if (document.getElementById(contentId)) {
+                        showContent(contentId, false, headerId);
+                        return;
+                    }
+                } else {
+                    // Regular content ID
+                    if (document.getElementById(hash)) {
+                        showContent(hash, false);
+                        return;
+                    }
                 }
             }
             
@@ -5552,6 +5887,7 @@ const searchIndex = {
         // Handle navigation link clicks
         document.addEventListener('click', function(event) {
             const navLink = event.target.closest('.nav-link[data-content-id]');
+            
             if (navLink) {
                 event.preventDefault();
                 const contentId = navLink.getAttribute('data-content-id');

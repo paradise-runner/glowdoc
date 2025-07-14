@@ -14,3 +14,4 @@ path = "src/main.rs"
 serde = { version = "1.0", features = ["derive"] }
 serde_yaml = "0.9"
 pulldown-cmark = "0.9"
+regex = "1.10"

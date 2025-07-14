@@ -3,7 +3,7 @@ use std::path::Path;
 use std::env;
 use std::time::{SystemTime, UNIX_EPOCH};
 use serde::{Deserialize, Serialize};
-use pulldown_cmark::{Parser, Options, html};
+use pulldown_cmark::{Parser, Options, html, Event, Tag, HeadingLevel};
 
 mod config_builder;
 use config_builder::ConfigBuilder;
@@ -15,6 +15,15 @@ struct NavigationItem {
     file: Option<String>,
     #[serde(default)]
     items: Vec<NavigationItem>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    headers: Option<Vec<HeaderItem>>,
+}
+
+#[derive(Debug, Deserialize, Serialize, Clone)]
+struct HeaderItem {
+    title: String,
+    id: String,
+    level: u8,
 }
 
 #[derive(Debug, Deserialize, Serialize)]
@@ -87,6 +96,65 @@ impl GlowDocBuilder {
         Ok(config)
     }
 
+    fn extract_headers_from_markdown(&self, content: &str) -> Vec<HeaderItem> {
+        let mut options = Options::empty();
+        options.insert(Options::ENABLE_STRIKETHROUGH);
+        options.insert(Options::ENABLE_TABLES);
+        options.insert(Options::ENABLE_FOOTNOTES);
+        options.insert(Options::ENABLE_TASKLISTS);
+        
+        let parser = Parser::new_ext(content, options);
+        let mut headers = Vec::new();
+        let mut in_heading = false;
+        let mut current_level = 1;
+        let mut current_text = String::new();
+        
+        for event in parser {
+            match event {
+                Event::Start(Tag::Heading(level, _, _)) => {
+                    in_heading = true;
+                    current_level = match level {
+                        HeadingLevel::H1 => 1,
+                        HeadingLevel::H2 => 2,
+                        HeadingLevel::H3 => 3,
+                        HeadingLevel::H4 => 4,
+                        HeadingLevel::H5 => 5,
+                        HeadingLevel::H6 => 6,
+                    };
+                    current_text.clear();
+                }
+                Event::End(Tag::Heading(_, _, _)) => {
+                    if in_heading && !current_text.is_empty() {
+                        let id = self.slugify(&current_text);
+                        headers.push(HeaderItem {
+                            title: current_text.clone(),
+                            id,
+                            level: current_level,
+                        });
+                    }
+                    in_heading = false;
+                }
+                Event::Text(text) if in_heading => {
+                    current_text.push_str(&text);
+                }
+                _ => {}
+            }
+        }
+        
+        headers
+    }
+
+    fn slugify(&self, text: &str) -> String {
+        text.to_lowercase()
+            .chars()
+            .map(|c| if c.is_alphanumeric() { c } else { '-' })
+            .collect::<String>()
+            .split('-')
+            .filter(|s| !s.is_empty())
+            .collect::<Vec<&str>>()
+            .join("-")
+    }
+
     fn load_markdown_file(&self, file_path: &str) -> Result<String, Box<dyn std::error::Error>> {
         let full_path = Path::new(&self.docs_path).join(file_path);
         let content = fs::read_to_string(full_path)?;
@@ -102,7 +170,23 @@ impl GlowDocBuilder {
         let mut html_output = String::new();
         html::push_html(&mut html_output, parser);
         
-        Ok(html_output)
+        // Add IDs to headers in the generated HTML
+        let processed_html = self.add_header_ids_to_html(&html_output, &content);
+        
+        Ok(processed_html)
+    }
+
+    fn add_header_ids_to_html(&self, html: &str, _markdown_content: &str) -> String {
+        use regex::Regex;
+        
+        let re = Regex::new(r"<h([1-6])>([^<]+)</h[1-6]>").unwrap();
+        
+        re.replace_all(html, |caps: &regex::Captures| {
+            let level = &caps[1];
+            let text = &caps[2];
+            let id = self.slugify(text);
+            format!("<h{} id=\"{}\">{}</h{}>", level, id, text, level)
+        }).to_string()
     }
 
 
@@ -264,6 +348,34 @@ impl GlowDocBuilder {
         for nested_item in &item.items {
             let nested_path = format!("{}/{}", path_prefix, item.id);
             self.process_content_item_with_path(nested_item, section, content_html, search_index, "", &nested_path)?;
+        }
+        
+        Ok(())
+    }
+
+    fn extract_headers_and_update_navigation(&self, navigation: &mut [NavigationSection]) -> Result<(), Box<dyn std::error::Error>> {
+        for section in navigation.iter_mut() {
+            for item in section.items.iter_mut() {
+                self.update_item_headers(item)?;
+            }
+        }
+        Ok(())
+    }
+
+    fn update_item_headers(&self, item: &mut NavigationItem) -> Result<(), Box<dyn std::error::Error>> {
+        if let Some(file) = &item.file {
+            let full_path = Path::new(&self.docs_path).join(file);
+            if let Ok(content) = fs::read_to_string(full_path) {
+                let headers = self.extract_headers_from_markdown(&content);
+                if !headers.is_empty() {
+                    item.headers = Some(headers);
+                }
+            }
+        }
+        
+        // Recursively process nested items
+        for nested_item in item.items.iter_mut() {
+            self.update_item_headers(nested_item)?;
         }
         
         Ok(())
@@ -932,6 +1044,119 @@ impl GlowDocBuilder {
             background-color: hsl(var(--muted) / 0.2);
         }}
 
+        .content-wrapper {{
+            display: flex;
+            max-width: 1400px;
+            width: 100%;
+            gap: 2rem;
+        }}
+
+        .content-area {{
+            flex: 1;
+            max-width: 800px;
+            min-width: 0;
+        }}
+
+        .table-of-contents {{
+            width: 250px;
+            flex-shrink: 0;
+            position: sticky;
+            top: 100px;
+            height: fit-content;
+            max-height: calc(100vh - 120px);
+            overflow-y: auto;
+            background-color: hsl(var(--card));
+            border: 1px solid hsl(var(--border));
+            border-radius: var(--radius);
+            padding: 1rem;
+        }}
+
+        .toc-header {{
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid hsl(var(--border));
+        }}
+
+        .toc-header h3 {{
+            margin: 0;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: hsl(var(--foreground));
+            text-transform: uppercase;
+            letter-spacing: 0.025em;
+        }}
+
+        .toc-nav {{
+            font-size: 0.875rem;
+        }}
+
+        .toc-nav ul {{
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }}
+
+        .toc-nav li {{
+            margin-bottom: 0.25rem;
+        }}
+
+        .toc-nav a {{
+            display: block;
+            padding: 0.25rem 0.5rem;
+            color: hsl(var(--muted-foreground));
+            text-decoration: none;
+            border-radius: calc(var(--radius) - 2px);
+            transition: all 0.2s;
+            font-size: 0.75rem;
+            line-height: 1.4;
+            border-left: 2px solid transparent;
+        }}
+
+        .toc-nav a:hover {{
+            background-color: hsl(var(--accent));
+            color: hsl(var(--foreground));
+            border-left-color: hsl(var(--primary) / 0.5);
+        }}
+
+        .toc-nav a.active {{
+            background-color: hsl(var(--primary) / 0.1);
+            color: hsl(var(--primary));
+            border-left-color: hsl(var(--primary));
+            font-weight: 500;
+        }}
+
+        .toc-level-1 {{
+            margin-left: 0;
+        }}
+
+        .toc-level-2 {{
+            margin-left: 0;
+        }}
+
+        .toc-level-3 {{
+            margin-left: 1rem;
+        }}
+
+        .toc-level-4 {{
+            margin-left: 1.5rem;
+        }}
+
+        .toc-level-5 {{
+            margin-left: 2rem;
+        }}
+
+        .toc-level-6 {{
+            margin-left: 2.5rem;
+        }}
+
+        .toc-level-3 a,
+        .toc-level-4 a,
+        .toc-level-5 a,
+        .toc-level-6 a {{
+            font-size: 0.7rem;
+            padding: 0.2rem 0.4rem;
+        }}
+
         .main-content {{
             flex: 1;
             padding: 2rem;
@@ -942,7 +1167,6 @@ impl GlowDocBuilder {
 
         .content-section {{
             display: none;
-            max-width: 800px;
             width: 100%;
         }}
 
@@ -1045,6 +1269,23 @@ impl GlowDocBuilder {
                 padding: 1rem;
             }}
 
+            .content-wrapper {{
+                flex-direction: column;
+                gap: 1rem;
+            }}
+
+            .table-of-contents {{
+                position: static;
+                width: 100%;
+                max-height: none;
+                order: -1;
+                margin-bottom: 1rem;
+            }}
+
+            .content-area {{
+                max-width: none;
+            }}
+
             .social-links {{
                 margin-left: 0;
                 gap: 0.25rem;
@@ -1098,6 +1339,9 @@ impl GlowDocBuilder {
             document.getElementById('homepage').classList.add('active');
             document.getElementById('docs-layout').classList.remove('active');
             
+            // Clear table of contents when showing homepage
+            clearTableOfContents();
+            
             // Update URL to homepage
             history.pushState({ page: 'homepage' }, '', window.location.pathname);
         }
@@ -1107,8 +1351,8 @@ impl GlowDocBuilder {
             document.getElementById('docs-layout').classList.add('active');
         }
 
-        function showContent(contentId, updateUrl = true) {
-            console.log('showContent called with contentId:', contentId);
+        function showContent(contentId, updateUrl = true, headerId = null) {
+            console.log('showContent called with contentId:', contentId, 'headerId:', headerId);
             
             // Switch to docs view first
             showDocs();
@@ -1127,16 +1371,37 @@ impl GlowDocBuilder {
                 targetContent.classList.add('active');
                 console.log('Successfully activated content:', contentId);
                 
+                // Generate table of contents for this page
+                generateTableOfContents(targetContent);
+                
+                // Scroll to header if specified
+                if (headerId) {
+                    setTimeout(() => {
+                        const headerElement = document.getElementById(headerId);
+                        if (headerElement) {
+                            headerElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                            updateTocActiveState(headerId);
+                        }
+                    }, 100);
+                } else {
+                    // Update TOC active state based on scroll position
+                    updateTocActiveState();
+                }
+                
                 // Update URL if requested
                 if (updateUrl) {
-                    const newUrl = window.location.pathname + '#' + contentId;
-                    history.pushState({ contentId: contentId }, '', newUrl);
+                    const newUrl = headerId ? 
+                        window.location.pathname + '#' + contentId + '#' + headerId :
+                        window.location.pathname + '#' + contentId;
+                    history.pushState({ contentId: contentId, headerId: headerId }, '', newUrl);
                 }
             } else {
                 console.error('Content not found for ID:', contentId);
                 // List all available content sections for debugging
                 const allContentIds = Array.from(allSections).map(s => s.id);
                 console.log('Available content IDs:', allContentIds);
+                // Clear TOC if no content found
+                clearTableOfContents();
             }
             
             // Update active nav link
@@ -1158,6 +1423,147 @@ impl GlowDocBuilder {
                 document.getElementById('sidebar').classList.remove('visible');
             }
             
+        }
+
+        function generateTableOfContents(contentElement) {
+            const tocNav = document.getElementById('toc-nav');
+            const tocContainer = document.getElementById('table-of-contents');
+            
+            if (!contentElement) {
+                clearTableOfContents();
+                return;
+            }
+            
+            // Find all headers in the content
+            const headers = contentElement.querySelectorAll('h1, h2, h3, h4, h5, h6');
+            
+            if (headers.length === 0) {
+                clearTableOfContents();
+                return;
+            }
+            
+            // Show the TOC container
+            tocContainer.style.display = 'block';
+            
+            // Build the TOC structure
+            let tocHtml = '<ul>';
+            headers.forEach(header => {
+                const level = parseInt(header.tagName.substring(1));
+                const text = header.textContent;
+                const id = header.id;
+                
+                if (id) {
+                    const listItem = document.createElement('li');
+                    listItem.className = 'toc-level-' + level;
+                    
+                    const link = document.createElement('a');
+                    link.href = '#' + id;
+                    link.className = 'toc-link';
+                    link.setAttribute('data-header-id', id);
+                    link.textContent = text;
+                    
+                    listItem.appendChild(link);
+                    tocHtml += listItem.outerHTML;
+                }
+            });
+            tocHtml += '</ul>';
+            
+            tocNav.innerHTML = tocHtml;
+            
+            // Add click handlers for TOC links
+            const tocLinks = tocNav.querySelectorAll('.toc-link');
+            tocLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const headerId = this.getAttribute('data-header-id');
+                    const headerElement = document.getElementById(headerId);
+                    if (headerElement) {
+                        headerElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        updateTocActiveState(headerId);
+                        
+                        // Update URL with header
+                        const currentContent = document.querySelector('.content-section.active');
+                        if (currentContent) {
+                            const contentId = currentContent.id;
+                            const newUrl = window.location.pathname + '#' + contentId + '#' + headerId;
+                            history.pushState({ contentId: contentId, headerId: headerId }, '', newUrl);
+                        }
+                    }
+                });
+            });
+            
+            // Set up scroll spy for TOC
+            setupScrollSpy();
+        }
+
+        function clearTableOfContents() {
+            const tocNav = document.getElementById('toc-nav');
+            const tocContainer = document.getElementById('table-of-contents');
+            
+            if (tocNav) {
+                tocNav.innerHTML = '';
+            }
+            
+            if (tocContainer) {
+                tocContainer.style.display = 'none';
+            }
+        }
+
+        function updateTocActiveState(activeHeaderId) {
+            const tocLinks = document.querySelectorAll('.toc-link');
+            tocLinks.forEach(link => {
+                link.classList.remove('active');
+                if (activeHeaderId && link.getAttribute('data-header-id') === activeHeaderId) {
+                    link.classList.add('active');
+                }
+            });
+        }
+
+        function setupScrollSpy() {
+            const headers = document.querySelectorAll('.content-section.active h1, .content-section.active h2, .content-section.active h3, .content-section.active h4, .content-section.active h5, .content-section.active h6');
+            
+            if (headers.length === 0) return;
+            
+            const observer = new IntersectionObserver((entries) => {
+                let activeHeader = null;
+                
+                // Find the header that's most visible
+                entries.forEach(entry => {
+                    if (entry.isIntersecting && entry.intersectionRatio > 0.5) {
+                        activeHeader = entry.target.id;
+                    }
+                });
+                
+                // If no header is prominently visible, find the one closest to the top
+                if (!activeHeader) {
+                    let closestHeader = null;
+                    let closestDistance = Infinity;
+                    
+                    headers.forEach(header => {
+                        const rect = header.getBoundingClientRect();
+                        const distance = Math.abs(rect.top);
+                        if (distance < closestDistance && rect.top <= window.innerHeight / 2) {
+                            closestDistance = distance;
+                            closestHeader = header.id;
+                        }
+                    });
+                    
+                    activeHeader = closestHeader;
+                }
+                
+                if (activeHeader) {
+                    updateTocActiveState(activeHeader);
+                }
+            }, {
+                rootMargin: '-20% 0px -80% 0px',
+                threshold: [0, 0.25, 0.5, 0.75, 1]
+            });
+            
+            headers.forEach(header => {
+                if (header.id) {
+                    observer.observe(header);
+                }
+            });
         }
 
 
@@ -1241,15 +1647,35 @@ impl GlowDocBuilder {
             
             // Display results
             if (results.length === 0) {
-                searchResultsList.innerHTML = '<div class="no-results">No results found</div>';
+                searchResultsList.innerHTML = '<div class=\"no-results\">No results found</div>';
             } else {
-                searchResultsList.innerHTML = results.map(result => `
-                    <div class="search-result" onclick="showContentFromSearch('${result.id}')">
-                        <div class="search-result-title">${result.title}</div>
-                        <div class="search-result-section">${result.section}</div>
-                        ${result.snippet ? `<div class="search-result-snippet">${result.snippet}</div>` : ''}
-                    </div>
-                `).join('');
+                let resultsHtml = '';
+                results.forEach(result => {
+                    const resultDiv = document.createElement('div');
+                    resultDiv.className = 'search-result';
+                    resultDiv.onclick = () => showContentFromSearch(result.id);
+                    
+                    const titleDiv = document.createElement('div');
+                    titleDiv.className = 'search-result-title';
+                    titleDiv.textContent = result.title;
+                    resultDiv.appendChild(titleDiv);
+                    
+                    const sectionDiv = document.createElement('div');
+                    sectionDiv.className = 'search-result-section';
+                    sectionDiv.textContent = result.section;
+                    resultDiv.appendChild(sectionDiv);
+                    
+                    if (result.snippet) {
+                        const snippetDiv = document.createElement('div');
+                        snippetDiv.className = 'search-result-snippet';
+                        snippetDiv.innerHTML = result.snippet;
+                        resultDiv.appendChild(snippetDiv);
+                    }
+                    
+                    resultsHtml += resultDiv.outerHTML;
+                });
+                
+                searchResultsList.innerHTML = resultsHtml;
             }
         }
         
@@ -1281,11 +1707,20 @@ impl GlowDocBuilder {
             const hash = window.location.hash.substring(1); // Remove the # symbol
             
             if (hash) {
-                // Check if the content exists with the provided hash
-                if (document.getElementById(hash)) {
-                    // Show the content without updating URL (it's already correct)
-                    showContent(hash, false);
-                    return;
+                // Check if this is a header link (contains two # symbols)
+                const hashParts = hash.split('#');
+                if (hashParts.length === 2) {
+                    const [contentId, headerId] = hashParts;
+                    if (document.getElementById(contentId)) {
+                        showContent(contentId, false, headerId);
+                        return;
+                    }
+                } else {
+                    // Regular content ID
+                    if (document.getElementById(hash)) {
+                        showContent(hash, false);
+                        return;
+                    }
                 }
             }
             
@@ -1299,6 +1734,7 @@ impl GlowDocBuilder {
         // Handle navigation link clicks
         document.addEventListener('click', function(event) {
             const navLink = event.target.closest('.nav-link[data-content-id]');
+            
             if (navLink) {
                 event.preventDefault();
                 const contentId = navLink.getAttribute('data-content-id');
@@ -1437,7 +1873,19 @@ impl GlowDocBuilder {
         </aside>
 
         <main class=\"main-content\">
+            <div class=\"content-wrapper\">
+                <div class=\"content-area\">
 {}
+                </div>
+                <aside class=\"table-of-contents\" id=\"table-of-contents\">
+                    <div class=\"toc-header\">
+                        <h3>On this page</h3>
+                    </div>
+                    <nav class=\"toc-nav\" id=\"toc-nav\">
+                        <!-- Table of contents will be populated by JavaScript -->
+                    </nav>
+                </aside>
+            </div>
         </main>
     </div>
 
@@ -1472,7 +1920,10 @@ impl GlowDocBuilder {
     fn build(&self) -> Result<(), Box<dyn std::error::Error>> {
         println!("Building GlowDoc...");
         
-        let config = self.load_config()?;
+        let mut config = self.load_config()?;
+        
+        // Extract headers from markdown files and update navigation
+        self.extract_headers_and_update_navigation(&mut config.navigation)?;
         
         // Generate homepage, sidebar and content
         let homepage_html = self.load_homepage()?;
