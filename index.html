@@ -850,7 +850,7 @@
 <p><strong>⚡ Lightning Fast</strong> - Minimal dependencies, optimized performance, and single-page application architecture for instant page loads</p>
 <p><strong>♿ Accessibility First</strong> - Built with WCAG guidelines in mind, featuring proper semantic markup, keyboard navigation, and screen reader support</p>
 <p><strong>🎛️ Highly Customizable</strong> - Easy theming system with CSS custom properties, flexible layouts, and extensible components</p>
-<p><strong>🔧 Developer Friendly</strong> - Simple markdown workflow, automatic config generation, and hot reload development experience</p>
+<p><strong>🔧 Developer Friendly</strong> - Simple markdown workflow, automatic config generation, and lightning-fast hot reload development experience</p>
 <img src="docs/diagonal_comparison.png" width=100%/>
 <h2>Key Features</h2>
 <h3>📝 Markdown-Powered Content</h3>
@@ -928,13 +928,48 @@ source ~/.cargo/env
 # 3. Generate your configuration
 cargo run init-config
 
-# 4. Build your beautiful documentation site
-cargo run --release
-
-# 5. Preview locally
-python3 -m http.server 8000
+# 4. Start development server with hot reload (recommended)
+cargo run watch
 # Visit http://localhost:8000 to see your docs!
+# Changes to files automatically rebuild and refresh your browser
+
+# Alternative: One-time build for production
+# cargo run --release &amp;&amp; python3 -m http.server 8000
 </code></pre>
+<h2>🔥 Lightning-Fast Development with Hot Reload</h2>
+<p>Experience the future of documentation development with our built-in hot reload server:</p>
+<h3><strong>Instant Feedback Loop</strong></h3>
+<ul>
+<li><strong>Save a file</strong> → <strong>Site rebuilds</strong> → <strong>Browser refreshes</strong> → <strong>See changes instantly</strong></li>
+<li>No manual rebuilds, no refresh button needed, just pure development flow</li>
+</ul>
+<h3><strong>Rich Media Support</strong></h3>
+<ul>
+<li><strong>Images, videos, fonts</strong> - All served directly from your <code>docs/</code> folder</li>
+<li><strong>Live asset updates</strong> - Change an image and see it update immediately</li>
+<li><strong>No configuration needed</strong> - Just drop files in and reference them</li>
+</ul>
+<h3><strong>Smart Development Features</strong></h3>
+<ul>
+<li><strong>Debounced rebuilds</strong> - Prevents duplicate builds from rapid file saves</li>
+<li><strong>Clean console output</strong> - Shows only what matters during development</li>
+<li><strong>Error reporting</strong> - Clear feedback when something goes wrong</li>
+<li><strong>Debug mode</strong> - <code>GLOWDOC_DEBUG=1 cargo run watch</code> for verbose logging</li>
+</ul>
+<pre><code class="language-bash"># Start the magic ✨
+cargo run watch
+
+# Then edit your markdown files and watch the magic happen:
+# 🔄 Rebuilding after entry.md change...
+# ✅ Ready
+</code></pre>
+<p>Perfect for:</p>
+<ul>
+<li><strong>Writing and previewing</strong> content in real-time</li>
+<li><strong>Testing responsive layouts</strong> across different screen sizes</li>
+<li><strong>Iterating on design</strong> changes with immediate visual feedback</li>
+<li><strong>Adding images and assets</strong> with instant preview</li>
+</ul>
 <h2>Perfect For Every Documentation Need</h2>
 <h3>📚 <strong>Project Documentation</strong></h3>
 <p>Document your open source projects, internal tools, or enterprise software with professional-grade presentation</p>
@@ -957,6 +992,8 @@ python3 -m http.server 8000
 <p>Your documentation loads instantly and stays responsive, even with hundreds of pages of content.</p>
 <h3>🔍 <strong>Search-First Experience</strong></h3>
 <p>Built-in search helps users find exactly what they're looking for, when they need it.</p>
+<h3>🔥 <strong>Hot Reload Development</strong></h3>
+<p>Revolutionary development experience with instant rebuilds and browser refresh - see your changes in real-time as you write.</p>
 <h2>Our Philosophy</h2>
 <blockquote>
 <p><strong>Great documentation should be invisible technology.</strong></p>
@@ -5518,47 +5555,6 @@ const searchIndex = {
 };
 
 
-        // Hot reload functionality
-        function initHotReload() {
-            const ws = new WebSocket('ws://localhost:8081');
-            
-            ws.onopen = function() {
-                // Only log in debug mode or if explicitly enabled
-                if (localStorage.getItem('glowdoc-debug') === 'true') {
-                    console.log('🔥 Hot reload connected');
-                }
-            };
-            
-            ws.onmessage = function(event) {
-                if (event.data === 'reload') {
-                    console.log('🔄 Reloading page...');
-                    window.location.reload();
-                }
-            };
-            
-            ws.onclose = function() {
-                // Only log reconnection attempts in debug mode
-                if (localStorage.getItem('glowdoc-debug') === 'true') {
-                    console.log('🔌 Hot reload disconnected, attempting to reconnect...');
-                }
-                setTimeout(initHotReload, 1000);
-            };
-            
-            ws.onerror = function(error) {
-                // Only log errors in debug mode
-                if (localStorage.getItem('glowdoc-debug') === 'true') {
-                    console.log('🚫 Hot reload error:', error);
-                }
-            };
-        }
-        
-        // Initialize hot reload when page loads
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', initHotReload);
-        } else {
-            initHotReload();
-        }
-        
         function toggleTheme() {
             const html = document.documentElement;
             const currentTheme = html.getAttribute('data-theme');

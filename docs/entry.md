@@ -16,7 +16,7 @@ Create stunning documentation sites with modern design principles. GlowDoc is a 
 
 **🎛️ Highly Customizable** - Easy theming system with CSS custom properties, flexible layouts, and extensible components
 
-**🔧 Developer Friendly** - Simple markdown workflow, automatic config generation, and hot reload development experience
+**🔧 Developer Friendly** - Simple markdown workflow, automatic config generation, and lightning-fast hot reload development experience
 
 <img src="docs/diagonal_comparison.png" width=100%/>
 
@@ -111,13 +111,48 @@ source ~/.cargo/env
 # 3. Generate your configuration
 cargo run init-config
 
-# 4. Build your beautiful documentation site
-cargo run --release
-
-# 5. Preview locally
-python3 -m http.server 8000
+# 4. Start development server with hot reload (recommended)
+cargo run watch
 # Visit http://localhost:8000 to see your docs!
+# Changes to files automatically rebuild and refresh your browser
+
+# Alternative: One-time build for production
+# cargo run --release && python3 -m http.server 8000
 ```
+
+## 🔥 Lightning-Fast Development with Hot Reload
+
+Experience the future of documentation development with our built-in hot reload server:
+
+### **Instant Feedback Loop**
+- **Save a file** → **Site rebuilds** → **Browser refreshes** → **See changes instantly**
+- No manual rebuilds, no refresh button needed, just pure development flow
+
+### **Rich Media Support**
+- **Images, videos, fonts** - All served directly from your `docs/` folder
+- **Live asset updates** - Change an image and see it update immediately
+- **No configuration needed** - Just drop files in and reference them
+
+### **Smart Development Features**
+- **Debounced rebuilds** - Prevents duplicate builds from rapid file saves
+- **Clean console output** - Shows only what matters during development
+- **Error reporting** - Clear feedback when something goes wrong
+- **Debug mode** - `GLOWDOC_DEBUG=1 cargo run watch` for verbose logging
+
+```bash
+# Start the magic ✨
+cargo run watch
+
+# Then edit your markdown files and watch the magic happen:
+# 🔄 Rebuilding after entry.md change...
+# ✅ Ready
+```
+
+Perfect for:
+- **Writing and previewing** content in real-time
+- **Testing responsive layouts** across different screen sizes  
+- **Iterating on design** changes with immediate visual feedback
+- **Adding images and assets** with instant preview
 
 ## Perfect For Every Documentation Need
 
@@ -162,6 +197,10 @@ Your documentation loads instantly and stays responsive, even with hundreds of p
 ### 🔍 **Search-First Experience**
 
 Built-in search helps users find exactly what they're looking for, when they need it.
+
+### 🔥 **Hot Reload Development**
+
+Revolutionary development experience with instant rebuilds and browser refresh - see your changes in real-time as you write.
 
 ## Our Philosophy
 
