@@ -94,3 +94,5 @@ perf.data*
 
 # AI Files
 CLAUDE.md
+
+logs/
