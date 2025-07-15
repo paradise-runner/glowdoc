@@ -1030,6 +1030,53 @@ impl GlowDocBuilder {
     }
 }
 
+#[cfg(test)]
+mod tests {
+    use super::*;
+    
+    #[test]
+    fn test_generated_index_matches_current() {
+        // Create a new builder instance
+        let builder = GlowDocBuilder::new();
+        
+        // Read the current index.html content
+        let current_content = fs::read_to_string(&builder.output_path)
+            .expect("Failed to read current index.html file");
+        
+        // Load config and generate new content
+        let mut config = builder.load_config()
+            .expect("Failed to load config");
+        
+        // Extract headers and update navigation
+        builder.extract_headers_and_update_navigation(&mut config.navigation)
+            .expect("Failed to extract headers");
+        
+        // Generate all components
+        let homepage_html = builder.load_homepage()
+            .expect("Failed to load homepage");
+        let sidebar_html = builder.generate_sidebar(&config.navigation);
+        let (content_html, search_index) = builder.generate_content(&config.navigation)
+            .expect("Failed to generate content");
+        
+        // Generate the complete HTML (without hot reload)
+        let generated_content = builder.generate_html(
+            &config, 
+            &sidebar_html, 
+            &content_html, 
+            &homepage_html, 
+            &search_index, 
+            false
+        );
+        
+        // Compare the contents
+        assert_eq!(
+            current_content.trim(), 
+            generated_content.trim(),
+            "Generated index.html content does not match the current index.html file"
+        );
+    }
+}
+
 #[tokio::main]
 async fn main() {
     let args: Vec<String> = env::args().collect();

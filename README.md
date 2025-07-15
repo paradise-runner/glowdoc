@@ -194,12 +194,43 @@ GlowDoc works with any static hosting service:
 - **Vercel**: Deploy with zero configuration
 - **Any Static Host**: Upload the built files
 
+## Testing
+
+GlowDoc includes unit tests to ensure reliability and consistency:
+
+### Running Tests
+
+```bash
+# Run all tests
+cargo test
+
+# Run specific test
+cargo test test_generated_index_matches_current
+
+# Run tests with output
+cargo test -- --nocapture
+```
+
+### Test Coverage
+
+- **`test_generated_index_matches_current`** - Verifies that the build process generates exactly the same index.html content as the current file. This test:
+  - Loads the current index.html file
+  - Runs the complete build process (config loading, markdown processing, HTML generation)
+  - Compares the newly generated content with the existing file
+  - Ensures no regressions or unexpected changes in the build output
+
+This test is particularly useful for:
+- Validating that refactoring doesn't change the output
+- Ensuring consistent builds across different environments
+- Catching unintended modifications to the generation logic
+
 ## Available Commands
 
 - `cargo run init-config` - Generate config.yaml from docs structure (interactive or CLI)
 - `cargo run watch` - Start development server with hot reload (recommended for development)
 - `cargo run --release` - Build the site once from markdown files
 - `cargo build --release` - Compile the Rust binary without running
+- `cargo test` - Run unit tests to verify build consistency
 - `python3 -m http.server 8000` - Serve static files (for production builds)
 
 ## License
