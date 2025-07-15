@@ -1062,26 +1062,30 @@ impl GlowDocBuilder {
             max-width: 1400px;
             width: 100%;
             gap: 2rem;
+            height: 100%;
+            padding: 2rem;
         }}
 
         .content-area {{
             flex: 1;
             max-width: 800px;
             min-width: 0;
+            overflow-y: auto;
+            height: 100%;
         }}
 
         .table-of-contents {{
             width: 250px;
             flex-shrink: 0;
-            position: sticky;
-            top: 100px;
+            position: static;
             height: fit-content;
-            max-height: calc(100vh - 120px);
+            max-height: 100%;
             overflow-y: auto;
             background-color: hsl(var(--card));
             border: 1px solid hsl(var(--border));
             border-radius: var(--radius);
             padding: 1rem;
+            z-index: 10;
         }}
 
         .toc-header {{
@@ -1172,8 +1176,8 @@ impl GlowDocBuilder {
 
         .main-content {{
             flex: 1;
-            padding: 2rem;
-            overflow-y: auto;
+            padding: 0;
+            height: calc(100vh - 80px - 4rem);
             display: flex;
             justify-content: center;
         }}
@@ -1288,11 +1292,35 @@ impl GlowDocBuilder {
             }}
 
             .table-of-contents {{
-                position: static;
+                position: sticky;
+                top: 80px;
                 width: 100%;
-                max-height: none;
+                max-height: 40vh;
                 order: -1;
                 margin-bottom: 1rem;
+                z-index: 20;
+            }}
+
+            .toc-header {{
+                cursor: pointer;
+                user-select: none;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }}
+
+            .toc-header::after {{
+                content: '▼';
+                font-size: 0.75rem;
+                transition: transform 0.2s ease;
+            }}
+
+            .table-of-contents.collapsed .toc-header::after {{
+                transform: rotate(-90deg);
+            }}
+
+            .table-of-contents.collapsed .toc-nav {{
+                display: none;
             }}
 
             .content-area {{
@@ -1585,24 +1613,31 @@ impl GlowDocBuilder {
             
             if (headers.length === 0) return;
             
+            // Clear any existing scroll spy
+            if (window.currentScrollObserver) {
+                window.currentScrollObserver.disconnect();
+            }
+            
             const observer = new IntersectionObserver((entries) => {
                 let activeHeader = null;
+                let maxRatio = 0;
                 
-                // Find the header that's most visible
+                // Find the header with the highest intersection ratio
                 entries.forEach(entry => {
-                    if (entry.isIntersecting && entry.intersectionRatio > 0.5) {
+                    if (entry.isIntersecting && entry.intersectionRatio > maxRatio) {
+                        maxRatio = entry.intersectionRatio;
                         activeHeader = entry.target.id;
                     }
                 });
                 
-                // If no header is prominently visible, find the one closest to the top
+                // If no header is intersecting, find the one closest to the top
                 if (!activeHeader) {
                     let closestHeader = null;
                     let closestDistance = Infinity;
                     
                     headers.forEach(header => {
                         const rect = header.getBoundingClientRect();
-                        const distance = Math.abs(rect.top);
+                        const distance = Math.abs(rect.top - 100); // Account for sticky header
                         if (distance < closestDistance && rect.top <= window.innerHeight / 2) {
                             closestDistance = distance;
                             closestHeader = header.id;
@@ -1614,10 +1649,31 @@ impl GlowDocBuilder {
                 
                 if (activeHeader) {
                     updateTocActiveState(activeHeader);
+                    
+                    // Ensure active TOC item is visible in mobile collapsed mode
+                    const activeTocLink = document.querySelector('.toc-link.active');
+                    if (activeTocLink) {
+                        const tocContainer = document.getElementById('table-of-contents');
+                        if (tocContainer && !tocContainer.classList.contains('collapsed')) {
+                            const tocNav = document.getElementById('toc-nav');
+                            if (tocNav) {
+                                const navRect = tocNav.getBoundingClientRect();
+                                const linkRect = activeTocLink.getBoundingClientRect();
+                                
+                                if (linkRect.bottom > navRect.bottom || linkRect.top < navRect.top) {
+                                    activeTocLink.scrollIntoView({ 
+                                        behavior: 'smooth', 
+                                        block: 'nearest',
+                                        inline: 'nearest'
+                                    });
+                                }
+                            }
+                        }
+                    }
                 }
             }, {
-                rootMargin: '-20% 0px -80% 0px',
-                threshold: [0, 0.25, 0.5, 0.75, 1]
+                rootMargin: '-80px 0px -50% 0px',
+                threshold: [0, 0.1, 0.25, 0.5, 0.75, 1]
             });
             
             headers.forEach(header => {
@@ -1625,6 +1681,8 @@ impl GlowDocBuilder {
                     observer.observe(header);
                 }
             });
+            
+            window.currentScrollObserver = observer;
         }
 
 
@@ -1803,6 +1861,18 @@ impl GlowDocBuilder {
                 event.preventDefault();
                 const contentId = navLink.getAttribute('data-content-id');
                 showContent(contentId);
+            }
+        });
+
+        // Handle TOC mobile toggle
+        document.addEventListener('click', function(event) {
+            const tocHeader = event.target.closest('.toc-header');
+            
+            if (tocHeader && window.innerWidth <= 768) {
+                const tocContainer = tocHeader.closest('.table-of-contents');
+                if (tocContainer) {
+                    tocContainer.classList.toggle('collapsed');
+                }
             }
         });
 
