@@ -642,7 +642,7 @@ pub fn generate_css(theme: &str) -> String {
             max-width: 1400px;
             width: 100%;
             gap: 2rem;
-            height: 100%;
+            height: calc(100vh - 80px - 4rem);
             padding: 2rem;
         }}
 
@@ -657,9 +657,10 @@ pub fn generate_css(theme: &str) -> String {
         .table-of-contents {{
             width: 250px;
             flex-shrink: 0;
-            position: static;
+            position: sticky;
+            top: 2rem;
             height: fit-content;
-            max-height: 100%;
+            max-height: calc(100vh - 80px - 6rem);
             overflow-y: auto;
             background-color: hsl(var(--card));
             border: 1px solid hsl(var(--border));
@@ -757,7 +758,7 @@ pub fn generate_css(theme: &str) -> String {
         .main-content {{
             flex: 1;
             padding: 0;
-            height: calc(100vh - 80px - 4rem);
+            overflow-y: auto;
             display: flex;
             justify-content: center;
         }}
