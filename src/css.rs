@@ -639,26 +639,28 @@ pub fn generate_css(theme: &str) -> String {
 
         .content-wrapper {{
             display: flex;
-            max-width: 1400px;
+            max-width: none;
             width: 100%;
-            gap: 2rem;
+            gap: 0;
             height: calc(100vh - 80px - 4rem);
-            padding: 2rem;
+            padding: 2rem 0 2rem 2rem;
         }}
 
         .content-area {{
             flex: 1;
-            max-width: 800px;
+            max-width: none;
             min-width: 0;
             overflow-y: auto;
             height: 100%;
+            padding-right: 310px;
         }}
 
         .table-of-contents {{
             width: 250px;
             flex-shrink: 0;
-            position: sticky;
-            top: 2rem;
+            position: fixed;
+            top: calc(80px + 2rem);
+            right: 2rem;
             height: fit-content;
             max-height: calc(100vh - 80px - 6rem);
             overflow-y: auto;
@@ -870,12 +872,13 @@ pub fn generate_css(theme: &str) -> String {
             .content-wrapper {{
                 flex-direction: column;
                 gap: 1rem;
-                padding-top: 0;
+                padding: 1rem;
             }}
 
             .table-of-contents {{
-                position: sticky;
-                // top: 80px;
+                position: static;
+                top: auto;
+                right: auto;
                 width: 100%;
                 max-height: 40vh;
                 order: -1;
@@ -908,6 +911,7 @@ pub fn generate_css(theme: &str) -> String {
 
             .content-area {{
                 max-width: none;
+                padding-right: 0;
             }}
 
             .social-links {{
