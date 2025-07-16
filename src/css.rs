@@ -863,22 +863,24 @@ pub fn generate_css(theme: &str) -> String {
                 transform: translateX(0);
             }}
 
-            .main-content {{
-                padding: 1rem;
-            }}
+            // .main-content {{
+            //     padding: 1rem;
+            // }}
 
             .content-wrapper {{
                 flex-direction: column;
                 gap: 1rem;
+                padding-top: 0;
             }}
 
             .table-of-contents {{
                 position: sticky;
-                top: 80px;
+                // top: 80px;
                 width: 100%;
                 max-height: 40vh;
                 order: -1;
                 margin-bottom: 1rem;
+                margin-top: 0;
                 z-index: 20;
             }}
 
