@@ -828,7 +828,7 @@ pub fn generate_css(theme: &str) -> String {
 
         footer {{
             border-top: 1px solid hsl(var(--border));
-            padding: 2rem 0;
+            padding: 1rem 0;
             text-align: center;
             color: hsl(var(--muted-foreground));
         }}
