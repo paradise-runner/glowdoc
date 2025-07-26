@@ -485,7 +485,7 @@ impl GlowDocBuilder {
         let current_year = self.get_current_year();
         
         // Check if favicon.ico exists in docs folder
-        let favicon_html = if Path::new("docs/favicon.ico").exists() {
+        let favicon_html = if Path::new("favicon.ico").exists() {
             "\n    <link rel=\"shortcut icon\" type=\"image/x-icon\" href=\"favicon.ico\">"
         } else {
             ""
