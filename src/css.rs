@@ -870,18 +870,18 @@ pub fn generate_css(theme: &str) -> String {
 
             .content-wrapper {{
                 flex-direction: column;
-                gap: 1rem;
-                padding: 1rem;
+                gap-top: 1rem;
+                margin: 1rem;
             }}
 
             .table-of-contents {{
                 position: static;
                 top: auto;
                 right: auto;
-                width: 100%;
+                width: auto;
                 max-height: 40vh;
                 order: -1;
-                margin-bottom: 1rem;
+                // margin-bottom: 1rem;
                 margin-top: 0;
                 z-index: 20;
             }}
