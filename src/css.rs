@@ -662,7 +662,7 @@ pub fn generate_css(theme: &str) -> String {
             top: calc(80px + 2rem);
             right: 2rem;
             height: fit-content;
-            max-height: calc(100vh - 80px - 6rem);
+            max-height: calc(100vh - 80px - 8rem);
             overflow-y: auto;
             background-color: hsl(var(--card));
             border: 1px solid hsl(var(--border));
