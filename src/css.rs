@@ -172,9 +172,9 @@ pub fn generate_css(theme: &str) -> String {
         }}
 
         .container {{
-            max-width: 1200px;
+            max-width: 95%;
             margin: 0 auto;
-            padding: 0 1rem;
+            padding: 0 2rem;
         }}
 
         header {{
@@ -202,7 +202,7 @@ pub fn generate_css(theme: &str) -> String {
 
         .nav {{
             display: flex;
-            gap: 2rem;
+            gap: 1rem;
             align-items: center;
         }}
 
