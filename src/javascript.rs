@@ -188,6 +188,11 @@ pub fn generate_javascript(enable_hot_reload: bool) -> String {
             // Show the TOC container
             tocContainer.style.display = 'block';
             
+            // Set TOC as collapsed by default on mobile
+            if (window.innerWidth <= 768) {
+                tocContainer.classList.add('collapsed');
+            }
+            
             // Build the TOC structure
             let tocHtml = '<ul>';
             headers.forEach(header => {

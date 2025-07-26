@@ -573,7 +573,7 @@
             top: calc(80px + 2rem);
             right: 2rem;
             height: fit-content;
-            max-height: calc(100vh - 80px - 10rem);
+            max-height: calc(100vh - 80px - 8rem);
             overflow-y: auto;
             background-color: hsl(var(--card));
             border: 1px solid hsl(var(--border));
@@ -5730,6 +5730,11 @@ const searchIndex = {
             
             // Show the TOC container
             tocContainer.style.display = 'block';
+            
+            // Set TOC as collapsed by default on mobile
+            if (window.innerWidth <= 768) {
+                tocContainer.classList.add('collapsed');
+            }
             
             // Build the TOC structure
             let tocHtml = '<ul>';
