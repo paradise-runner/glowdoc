@@ -911,7 +911,8 @@ pub fn generate_css(theme: &str) -> String {
 
             .content-area {{
                 max-width: none;
-                padding-right: 0;
+                padding-right: 1rem;
+                padding-left: 1rem;
             }}
 
             .social-links {{
