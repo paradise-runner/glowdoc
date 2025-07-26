@@ -642,8 +642,7 @@ pub fn generate_css(theme: &str) -> String {
             max-width: none;
             width: 100%;
             gap: 0;
-            height: calc(100vh - 80px - 4rem);
-            padding: 2rem 0 2rem 2rem;
+            margin-left: 1rem;
         }}
 
         .content-area {{
@@ -660,9 +659,9 @@ pub fn generate_css(theme: &str) -> String {
             flex-shrink: 0;
             position: fixed;
             top: calc(80px + 2rem);
-            right: 2rem;
+            right: 0.5rem;
             height: fit-content;
-            max-height: calc(100vh - 80px - 8rem);
+            max-height: calc(100vh - 80px - 10rem);
             overflow-y: auto;
             background-color: hsl(var(--card));
             border: 1px solid hsl(var(--border));
