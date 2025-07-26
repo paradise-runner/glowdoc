@@ -309,6 +309,16 @@ pub fn generate_javascript(enable_hot_reload: bool) -> String {
                 if (activeHeader) {
                     updateTocActiveState(activeHeader);
                     
+                    // Update URL with current section and header
+                    const currentContent = document.querySelector('.content-section.active');
+                    if (currentContent) {
+                        const contentId = currentContent.id;
+                        const newUrl = window.location.pathname + '#' + contentId + '#' + activeHeader;
+                        
+                        // Use replaceState to avoid creating browser history entries for scroll events
+                        history.replaceState({ contentId: contentId, headerId: activeHeader }, '', newUrl);
+                    }
+                    
                     // Ensure active TOC item is visible in mobile collapsed mode
                     const activeTocLink = document.querySelector('.toc-link.active');
                     if (activeTocLink) {

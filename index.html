@@ -5588,6 +5588,47 @@ const searchIndex = {
 };
 
 
+        // Hot reload functionality
+        function initHotReload() {
+            const ws = new WebSocket('ws://localhost:8081');
+            
+            ws.onopen = function() {
+                // Only log in debug mode or if explicitly enabled
+                if (localStorage.getItem('glowdoc-debug') === 'true') {
+                    console.log('🔥 Hot reload connected');
+                }
+            };
+            
+            ws.onmessage = function(event) {
+                if (event.data === 'reload') {
+                    console.log('🔄 Reloading page...');
+                    window.location.reload();
+                }
+            };
+            
+            ws.onclose = function() {
+                // Only log reconnection attempts in debug mode
+                if (localStorage.getItem('glowdoc-debug') === 'true') {
+                    console.log('🔌 Hot reload disconnected, attempting to reconnect...');
+                }
+                setTimeout(initHotReload, 1000);
+            };
+            
+            ws.onerror = function(error) {
+                // Only log errors in debug mode
+                if (localStorage.getItem('glowdoc-debug') === 'true') {
+                    console.log('🚫 Hot reload error:', error);
+                }
+            };
+        }
+        
+        // Initialize hot reload when page loads
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initHotReload);
+        } else {
+            initHotReload();
+        }
+        
         function toggleTheme() {
             const html = document.documentElement;
             const currentTheme = html.getAttribute('data-theme');
@@ -5849,6 +5890,16 @@ const searchIndex = {
                 
                 if (activeHeader) {
                     updateTocActiveState(activeHeader);
+                    
+                    // Update URL with current section and header
+                    const currentContent = document.querySelector('.content-section.active');
+                    if (currentContent) {
+                        const contentId = currentContent.id;
+                        const newUrl = window.location.pathname + '#' + contentId + '#' + activeHeader;
+                        
+                        // Use replaceState to avoid creating browser history entries for scroll events
+                        history.replaceState({ contentId: contentId, headerId: activeHeader }, '', newUrl);
+                    }
                     
                     // Ensure active TOC item is visible in mobile collapsed mode
                     const activeTocLink = document.querySelector('.toc-link.active');
