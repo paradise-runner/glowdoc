@@ -1,5 +1,5 @@
 [model]
-default = "gemma3n:e2b"
+default = "gemma3:12b"
 
 [fallback_models]
 ollama = [ "gemma3n:latest", "deepseek-r1:latest", "qwen3:latest",]
