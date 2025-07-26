@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GlowDoc - Modern Documentation</title>
     <meta name="description" content="modern docs for the modern world">
+    <link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
     <style>
         :root {
             --background: 310 100% 98%;
@@ -5588,47 +5589,6 @@ const searchIndex = {
 };
 
 
-        // Hot reload functionality
-        function initHotReload() {
-            const ws = new WebSocket('ws://localhost:8081');
-            
-            ws.onopen = function() {
-                // Only log in debug mode or if explicitly enabled
-                if (localStorage.getItem('glowdoc-debug') === 'true') {
-                    console.log('🔥 Hot reload connected');
-                }
-            };
-            
-            ws.onmessage = function(event) {
-                if (event.data === 'reload') {
-                    console.log('🔄 Reloading page...');
-                    window.location.reload();
-                }
-            };
-            
-            ws.onclose = function() {
-                // Only log reconnection attempts in debug mode
-                if (localStorage.getItem('glowdoc-debug') === 'true') {
-                    console.log('🔌 Hot reload disconnected, attempting to reconnect...');
-                }
-                setTimeout(initHotReload, 1000);
-            };
-            
-            ws.onerror = function(error) {
-                // Only log errors in debug mode
-                if (localStorage.getItem('glowdoc-debug') === 'true') {
-                    console.log('🚫 Hot reload error:', error);
-                }
-            };
-        }
-        
-        // Initialize hot reload when page loads
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', initHotReload);
-        } else {
-            initHotReload();
-        }
-        
         function toggleTheme() {
             const html = document.documentElement;
             const currentTheme = html.getAttribute('data-theme');

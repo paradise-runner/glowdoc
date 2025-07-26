@@ -483,13 +483,21 @@ impl GlowDocBuilder {
         // Generate social media links HTML
         let social_links_html = self.generate_social_links_html(&config.social);
         let current_year = self.get_current_year();
+        
+        // Check if favicon.ico exists in docs folder
+        let favicon_html = if Path::new("docs/favicon.ico").exists() {
+            "\n    <link rel=\"shortcut icon\" type=\"image/x-icon\" href=\"favicon.ico\">"
+        } else {
+            ""
+        };
+        
         format!("<!DOCTYPE html>
 <html lang=\"en\">
 <head>
     <meta charset=\"UTF-8\">
     <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">
     <title>{} - Modern Documentation</title>
-    <meta name=\"description\" content=\"{}\">
+    <meta name=\"description\" content=\"{}\">{}
     <style>
 {}
     </style>
@@ -565,6 +573,7 @@ impl GlowDocBuilder {
 </html>", 
             config.title, 
             config.description, 
+            favicon_html,
             css::generate_css(&config.theme),
             config.title,
             first_page_url,

@@ -1,4 +1,4 @@
-# GlowDoc
+# GlowDoc <img src="icon.svg" width="36px" alt="GlowDoc Icon" align="right"/>
 
 GlowDoc is a modern, lightweight documentation template that presents a beautiful thoughtful space for your work.  Built with HTML, CSS, and minimal JavaScript for fast loading and easy customization.
 
